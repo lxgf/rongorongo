@@ -64,14 +64,29 @@
         </main>
 
         {{-- Footer --}}
-        <footer class="py-6 border-t border-rule">
-            @hasSection('footer')
-                @yield('footer')
-            @else
+        <footer class="pt-8 pb-6">
+            {{-- Colophon --}}
+            <div class="border-t-[2px] border-soviet-red pt-4 mb-6">
+                <p class="text-[11px] leading-relaxed text-warm-gray max-w-xl">
+                    {{ __('front.colophon.disclaimer') }}
+                </p>
+                <p class="text-[11px] leading-relaxed text-warm-gray mt-2">
+                    {{ __('front.colophon.feedback') }}
+                    <a href="mailto:d.shaludnyov@gmail.com?subject=RONGO"
+                       class="text-ink hover:text-soviet-red transition-colors font-medium">d.shaludnyov@gmail.com</a>.
+                    {{ __('front.colophon.subject') }}
+                </p>
+            </div>
+
+            {{-- Page-specific footer + copyright --}}
+            <div class="border-t border-rule pt-4 flex items-baseline justify-between">
+                <div>
+                    @yield('footer')
+                </div>
                 <p class="text-[11px] text-warm-gray tracking-wider">
                     {{ __('front.site_title') }} &middot; {{ date('Y') }}
                 </p>
-            @endif
+            </div>
         </footer>
 
     </div>

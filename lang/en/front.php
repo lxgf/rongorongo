@@ -102,6 +102,11 @@ return [
         'all_tablets' => 'All tablets',
         'definition' => 'The texts are organized in lines following the boustrophedon pattern—alternating direction with each row. Each line contains a sequence of signs read in the indicated direction.',
     ],
+    'colophon' => [
+        'disclaimer' => 'This is an amateur research project. The author is not affiliated with any academic institution. The data may contain errors and inaccuracies.',
+        'feedback' => 'Corrections, criticism, and suggestions are welcome at',
+        'subject' => 'Please include RONGO in the subject line.',
+    ],
     'stats' => [
         'glyphs' => 'signs',
         'tablets' => 'tablets',
