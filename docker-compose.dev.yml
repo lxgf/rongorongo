@@ -32,6 +32,8 @@ services:
       - ./lang:/var/www/html/lang
       # Public assets shared with openresty
       - app_public:/var/www/html/public
+      # Vite build output — bind mount over named volume so host builds are visible
+      - ./public/build:/var/www/html/public/build
       - storage_data:/var/www/html/storage
       # Named volumes for vendor/node_modules — avoids slow Windows bind mounts
       - vendor_data:/var/www/html/vendor
@@ -46,6 +48,7 @@ services:
     volumes:
       - ./docker/openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - app_public:/var/www/html/public:ro
+      - ./public/build:/var/www/html/public/build:ro
 
 volumes:
   vendor_data:

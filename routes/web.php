@@ -9,6 +9,8 @@ Route::get('/tablets', [PageController::class, 'tablets'])->name('tablets');
 Route::get('/tablet/{code}', [PageController::class, 'tablet'])->name('tablet');
 
 Route::get('/ligatures', [PageController::class, 'ligatures'])->name('ligatures');
+Route::get('/renderings', [PageController::class, 'renderings'])->name('renderings');
+Route::get('/renderings/{code}', [PageController::class, 'rendering'])->name('rendering');
 Route::get('/lines', [PageController::class, 'lines'])->name('lines');
 
 Route::get('/locale/{locale}', function (string $locale) {

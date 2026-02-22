@@ -57,12 +57,20 @@
                     {{ __('front.glyph.renderings') }}
                 </h2>
                 <div class="flex-1 border-t border-ink"></div>
+                <a href="{{ route('rendering', $glyph->barthel_code) }}"
+                   class="text-[11px] text-warm-gray hover:text-soviet-red transition-colors tracking-wider whitespace-nowrap">
+                    {{ __('front.glyph.all_occurrences') }} &rarr;
+                </a>
             </div>
             <div class="flex flex-wrap gap-2">
                 @foreach($glyph->renderings as $rendering)
-                    <span class="px-3 py-1 border border-rule text-sm tabular-nums font-medium">
-                        {{ $rendering->code }}
-                    </span>
+                    <a href="{{ route('rendering', $glyph->barthel_code) }}"
+                       class="group inline-flex items-baseline gap-1.5 px-3 py-1 border border-rule hover:border-soviet-red text-sm tabular-nums font-medium transition-colors">
+                        <span class="group-hover:text-soviet-red transition-colors">{{ $rendering->code }}</span>
+                        @if($rendering->tablet_renderings_count > 0)
+                            <span class="text-[9px] text-warm-gray">&times;{{ $rendering->tablet_renderings_count }}</span>
+                        @endif
+                    </a>
                 @endforeach
             </div>
         </section>
@@ -82,6 +90,7 @@
                     <thead>
                         <tr class="border-b border-ink text-left">
                             <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.tablet') }}</th>
+                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.tablet_code') }}</th>
                             <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.side') }}</th>
                             <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.line') }}</th>
                             <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.position') }}</th>
@@ -92,11 +101,8 @@
                     <tbody>
                         @foreach($occurrences as $occ)
                             @php
-                                $mods = collect([
-                                    'is_inverted' => 'f', 'is_mirrored' => 'b', 'is_small' => 's',
-                                    'is_enlarged' => 'V', 'is_truncated' => 't', 'is_distorted' => 'y',
-                                    'is_uncertain' => '?', 'is_nonstandard' => 'x',
-                                ])->filter(fn($sym, $field) => $occ->$field)->values();
+                                $modifierKeys = ['is_inverted', 'is_mirrored', 'is_small', 'is_enlarged', 'is_truncated', 'is_distorted', 'is_uncertain', 'is_nonstandard'];
+                                $activeModifiers = collect($modifierKeys)->filter(fn($k) => $occ->$k)->map(fn($k) => __('front.renderings.modifiers.' . $k))->values();
                             @endphp
                             <tr class="border-b border-rule hover:bg-cream-dark transition-colors">
                                 <td class="py-1.5 pr-4">
@@ -105,6 +111,9 @@
                                         {{ $occ->tabletLine->tablet->name }}
                                     </a>
                                 </td>
+                                <td class="py-1.5 pr-4 tabular-nums text-warm-gray">
+                                    {{ $occ->tabletLine->tablet->code }}
+                                </td>
                                 <td class="py-1.5 pr-4 text-warm-gray">
                                     {{ $occ->tabletLine->side === 0 ? __('front.glyph.recto') : __('front.glyph.verso') }}
                                 </td>
@@ -112,7 +121,7 @@
                                 <td class="py-1.5 pr-4 tabular-nums">{{ $occ->position }}</td>
                                 <td class="py-1.5 pr-4 tabular-nums">{{ $occ->rendering->code }}</td>
                                 <td class="py-1.5 text-soviet-red text-xs font-medium">
-                                    {{ $mods->join(' ') }}
+                                    {{ $activeModifiers->join(', ') }}
                                 </td>
                             </tr>
                         @endforeach
@@ -138,15 +147,15 @@
                             @foreach($ligature->parts as $part)
                                 @php $img = $part->glyph->images->first(); @endphp
                                 <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
-                                   class="inline-block hover:opacity-70 transition-opacity"
+                                   class="size-8 border border-rule bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-soviet-red transition-colors"
                                    title="{{ $part->glyph->barthel_code }}">
                                     @if($img)
                                         <img src="{{ asset($img->path) }}"
-                                             class="h-7 w-auto object-contain"
+                                             class="max-w-full max-h-full object-contain p-0.5"
                                              alt="{{ $part->glyph->barthel_code }}"
                                              loading="lazy">
                                     @else
-                                        <span class="text-[10px] text-warm-gray">{{ $part->glyph->barthel_code }}</span>
+                                        <span class="text-[9px] text-warm-gray">{{ $part->glyph->barthel_code }}</span>
                                     @endif
                                 </a>
                                 @if(!$loop->last)

@@ -36,7 +36,10 @@ class PageController extends Controller
 
     public function glyph(string $code)
     {
-        $glyph = Glyph::with(['images', 'renderings'])
+        $glyph = Glyph::with([
+            'images',
+            'renderings' => fn ($q) => $q->withCount('tabletRenderings')->orderBy('code'),
+        ])
             ->where('barthel_code', $code)
             ->firstOrFail();
 
@@ -83,6 +86,42 @@ class PageController extends Controller
         ])->where('code', $code)->firstOrFail();
 
         return view('tablet', compact('tablet'));
+    }
+
+    public function renderings()
+    {
+        $glyphs = Glyph::with([
+            'images',
+            'renderings' => fn ($q) => $q->withCount('tabletRenderings')->orderBy('code'),
+        ])
+            ->has('renderings')
+            ->orderBy('barthel_code')
+            ->get();
+
+        $groups = $glyphs->groupBy(fn ($g) => intdiv(intval($g->barthel_code), 100) * 100);
+
+        $totalRenderings = $glyphs->sum(fn ($g) => $g->renderings->count());
+
+        return view('renderings', compact('groups', 'totalRenderings'));
+    }
+
+    public function rendering(string $code)
+    {
+        $glyph = Glyph::with([
+            'images',
+            'renderings' => fn ($q) => $q->orderBy('code'),
+            'renderings.tabletRenderings' => fn ($q) => $q->orderBy('tablet_line_id')->orderBy('position'),
+            'renderings.tabletRenderings.tabletLine.tablet',
+        ])
+            ->where('barthel_code', $code)
+            ->firstOrFail();
+
+        $totalOccurrences = $glyph->renderings->sum(fn ($r) => $r->tabletRenderings->count());
+
+        $prev = Glyph::where('barthel_code', '<', $code)->has('renderings')->orderByDesc('barthel_code')->first();
+        $next = Glyph::where('barthel_code', '>', $code)->has('renderings')->orderBy('barthel_code')->first();
+
+        return view('rendering', compact('glyph', 'totalOccurrences', 'prev', 'next'));
     }
 
     public function ligatures()

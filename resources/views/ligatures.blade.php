@@ -76,15 +76,15 @@
                         @foreach($ligature->parts as $part)
                             @php $img = $part->glyph->images->first(); @endphp
                             <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
-                               class="inline-block hover:outline hover:outline-1 hover:outline-soviet-red transition-all"
+                               class="size-8 border border-rule bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-soviet-red transition-colors"
                                title="{{ $part->glyph->barthel_code }}">
                                 @if($img)
                                     <img src="{{ asset($img->path) }}"
-                                         class="h-9 w-auto object-contain"
+                                         class="max-w-full max-h-full object-contain p-0.5"
                                          alt="{{ $part->glyph->barthel_code }}"
                                          loading="lazy">
                                 @else
-                                    <span class="inline-flex items-center justify-center h-9 px-2 border border-rule text-xs text-warm-gray font-medium tabular-nums">
+                                    <span class="text-[9px] text-warm-gray font-medium tabular-nums">
                                         {{ $part->glyph->barthel_code }}
                                     </span>
                                 @endif

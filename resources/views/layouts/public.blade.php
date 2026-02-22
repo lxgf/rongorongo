@@ -40,15 +40,20 @@
                           {{ request()->routeIs('ligatures') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
                     {{ __('front.nav.ligatures') }}
                 </a>
-                <a href="{{ route('tablets') }}"
+                <a href="{{ route('renderings') }}"
                    class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('tablets') || request()->routeIs('tablet') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.tablets') }}
+                          {{ request()->routeIs('renderings') || request()->routeIs('rendering') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
+                    {{ __('front.nav.renderings') }}
                 </a>
                 <a href="{{ route('lines') }}"
                    class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
                           {{ request()->routeIs('lines') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
                     {{ __('front.nav.lines') }}
+                </a>
+                <a href="{{ route('tablets') }}"
+                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
+                          {{ request()->routeIs('tablets') || request()->routeIs('tablet') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
+                    {{ __('front.nav.tablets') }}
                 </a>
             </nav>
         </header>
