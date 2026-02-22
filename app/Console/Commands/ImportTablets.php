@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\CompoundGlyph;
 use App\Models\CompoundGlyphPart;
 use App\Models\Glyph;
+use App\Models\Image;
 use App\Models\Rendering;
 use App\Models\Tablet;
 use App\Models\TabletLine;
@@ -102,6 +103,7 @@ class ImportTablets extends Command
             $this->info("Compound glyphs:  " . CompoundGlyph::count());
             $this->info("Compound parts:   " . CompoundGlyphPart::count());
             $this->info("Tablet renderings: " . TabletRendering::count());
+            $this->info("Images:           " . Image::count());
             $this->info("Total positions:  {$totalPositions}");
         });
 
@@ -115,6 +117,7 @@ class ImportTablets extends Command
         CompoundGlyphPart::query()->delete();
         CompoundGlyph::query()->delete();
         Rendering::query()->delete();
+        Image::query()->delete();
         Glyph::query()->delete();
         TabletLine::query()->delete();
         Tablet::query()->delete();
@@ -332,12 +335,15 @@ class ImportTablets extends Command
             return $this->glyphCache[$code];
         }
 
-        $image = isset($this->availableGifs[$code]) ? "glyphs/{$code}.GIF" : null;
+        $glyph = Glyph::firstOrCreate(['barthel_code' => $code]);
 
-        $glyph = Glyph::firstOrCreate(
-            ['barthel_code' => $code],
-            ['image' => $image]
-        );
+        // Attach GIF image via polymorphic images table
+        if (isset($this->availableGifs[$code])) {
+            $glyph->images()->firstOrCreate(
+                ['path' => "glyphs/{$code}.GIF"],
+                ['type' => 'glyph', 'sort_order' => 0]
+            );
+        }
 
         $this->glyphCache[$code] = $glyph->id;
         return $glyph->id;

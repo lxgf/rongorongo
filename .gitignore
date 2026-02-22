@@ -23,6 +23,4 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /.claude
-/database/*.sqlite
-/database/*.sqlite-journal
 *.zip
