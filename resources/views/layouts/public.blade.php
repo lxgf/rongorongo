@@ -47,7 +47,7 @@
                 </a>
                 <a href="{{ route('lines') }}"
                    class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('lines') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
+                          {{ request()->routeIs('lines') || request()->routeIs('line') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
                     {{ __('front.nav.lines') }}
                 </a>
                 <a href="{{ route('tablets') }}"

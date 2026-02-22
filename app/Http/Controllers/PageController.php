@@ -142,13 +142,7 @@ class PageController extends Controller
     {
         $tablets = Tablet::orderBy('code')->get();
 
-        $query = TabletLine::with([
-            'tablet',
-            'tabletRenderings' => fn ($q) => $q->orderBy('position'),
-            'tabletRenderings.rendering.glyph.images',
-            'tabletRenderings.compoundGlyph.parts' => fn ($q) => $q->orderBy('order'),
-            'tabletRenderings.compoundGlyph.parts.glyph.images',
-        ])
+        $query = TabletLine::with('tablet')
             ->withCount('tabletRenderings')
             ->orderBy('tablet_id')
             ->orderBy('side')
@@ -161,5 +155,43 @@ class PageController extends Controller
         $lines = $query->get()->groupBy(fn ($l) => $l->tablet->code);
 
         return view('lines', compact('lines', 'tablets'));
+    }
+
+    public function line(string $tabletCode, string $side, int $lineNumber)
+    {
+        $sideValue = in_array($side, ['b', 'v']) ? 1 : 0;
+
+        $tablet = Tablet::where('code', $tabletCode)->firstOrFail();
+
+        $line = TabletLine::with([
+            'tabletRenderings' => fn ($q) => $q->orderBy('position'),
+            'tabletRenderings.rendering.glyph.images',
+            'tabletRenderings.compoundGlyph.parts' => fn ($q) => $q->orderBy('order'),
+            'tabletRenderings.compoundGlyph.parts.glyph.images',
+        ])
+            ->where('tablet_id', $tablet->id)
+            ->where('side', $sideValue)
+            ->where('line', $lineNumber)
+            ->firstOrFail();
+
+        $prev = TabletLine::where('tablet_id', $tablet->id)
+            ->where(fn ($q) => $q
+                ->where('side', '<', $sideValue)
+                ->orWhere(fn ($q2) => $q2->where('side', $sideValue)->where('line', '<', $lineNumber))
+            )
+            ->orderByDesc('side')
+            ->orderByDesc('line')
+            ->first();
+
+        $next = TabletLine::where('tablet_id', $tablet->id)
+            ->where(fn ($q) => $q
+                ->where('side', '>', $sideValue)
+                ->orWhere(fn ($q2) => $q2->where('side', $sideValue)->where('line', '>', $lineNumber))
+            )
+            ->orderBy('side')
+            ->orderBy('line')
+            ->first();
+
+        return view('line', compact('tablet', 'line', 'prev', 'next'));
     }
 }

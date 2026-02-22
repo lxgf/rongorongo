@@ -41,6 +41,8 @@ return [
     'tablet' => [
         'recto' => 'Recto (a)',
         'verso' => 'Verso (b)',
+        'signs' => 'signs',
+        'pos' => 'Pos.',
     ],
     'ligatures' => [
         'title' => 'Ligatures',
@@ -101,6 +103,12 @@ return [
         'verso' => 'verso',
         'all_tablets' => 'All tablets',
         'definition' => 'The texts are organized in lines following the boustrophedon pattern—alternating direction with each row. Each line contains a sequence of signs read in the indicated direction.',
+        'view_line' => 'View',
+        'pos' => 'Pos.',
+        'back_to_lines' => 'All lines',
+        'line_title' => 'Line :line',
+        'direction_ltr' => 'left to right',
+        'direction_rtl' => 'right to left',
     ],
     'colophon' => [
         'disclaimer' => 'This is an amateur research project. The author is not affiliated with any academic institution. The data may contain errors and inaccuracies.',
