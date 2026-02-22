@@ -11,7 +11,7 @@ return [
     'alphabet' => [
         'title' => 'Alphabet',
         'search' => 'Search by code…',
-        'definition' => 'The Rongorongo script contains approximately 120 base signs, cataloged using the Barthel numbering system (001–799). Each glyph may appear in multiple renderings across the preserved tablets.',
+        'definition' => 'In this context, "alphabet" refers to the inventory of glyphs — the individual signs of the Rongorongo script. A glyph is an abstract sign unit identified by its Barthel number (001–799); the script contains approximately 120 base glyphs. Each glyph may appear in several graphic renderings (variants) across the preserved tablets.',
     ],
     'glyph' => [
         'renderings' => 'Renderings',
@@ -45,6 +45,13 @@ return [
         'parts' => 'Components',
         'occurrences' => 'occurrences',
         'definition' => 'Compound signs are formed by combining two or more base glyphs into a single unit. They appear frequently in the preserved texts and may represent semantic or phonetic combinations.',
+        'notation_title' => 'Notation',
+        'notation_dot_label' => 'Dot  ·  fusion',
+        'notation_dot' => 'Two glyphs drawn merged into one: 001.006 means glyphs 001 and 006 fused together.',
+        'notation_colon_label' => 'Colon  ·  stack',
+        'notation_colon' => 'One glyph placed on top of another: 005:008 means 005 above 008. Treated as a ligature.',
+        'notation_code_label' => 'Code structure',
+        'notation_code' => 'Parts separated by dots in order of composition: 001.006.022 is a triple ligature of three base glyphs.',
     ],
     'lines' => [
         'title' => 'Lines',

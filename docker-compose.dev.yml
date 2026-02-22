@@ -29,6 +29,7 @@ services:
       - ./routes:/var/www/html/routes
       - ./tests:/var/www/html/tests
       - ./artisan:/var/www/html/artisan
+      - ./lang:/var/www/html/lang
       # Public assets shared with openresty
       - app_public:/var/www/html/public
       - storage_data:/var/www/html/storage
