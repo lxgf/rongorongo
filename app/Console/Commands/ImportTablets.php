@@ -31,6 +31,23 @@ class ImportTablets extends Command
         'y' => 'is_distorted',
     ];
 
+    // Traditional tablet names
+    private const TABLET_NAMES = [
+        'A' => 'Tahua',
+        'B' => 'Aruku Kurenga',
+        'C' => 'Mamari',
+        'D' => 'Échancrée',
+        'E' => 'Keiti',
+        'G' => 'Small Santiago',
+        'H' => "Jaussen's String",
+        'K' => 'Réunion',
+        'N' => 'Small Vienna',
+        'P' => 'Apai',
+        'Q' => 'Unknown',
+        'R' => 'Small Washington',
+        'S' => 'Large Washington',
+    ];
+
     // Cache for created records
     private array $glyphCache = [];
     private array $renderingCache = [];
@@ -70,7 +87,7 @@ class ImportTablets extends Command
             foreach ($data as $tabletCode => $lines) {
                 $tablet = Tablet::create([
                     'code' => $tabletCode,
-                    'name' => $tabletCode,
+                    'name' => self::TABLET_NAMES[$tabletCode] ?? $tabletCode,
                 ]);
 
                 $this->info("  Tablet {$tabletCode}: " . count($lines) . " lines");
