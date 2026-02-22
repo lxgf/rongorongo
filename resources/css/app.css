@@ -6,6 +6,32 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+    --color-cream: #FAFAF5;
+    --color-cream-dark: #F0EFE8;
+    --color-ink: #1A1A1A;
+    --color-soviet-red: #CC2936;
+    --color-deep-blue: #2B4570;
+    --color-warm-gray: #9E9689;
+    --color-rule: #D4CFC3;
 }
+
+/* Soviet primer aesthetic — angular, no rounding */
+*, *::before, *::after {
+    border-radius: 0 !important;
+}
+
+/* Glyph card hover */
+.glyph-card:hover {
+    border-color: var(--color-soviet-red);
+}
+
+/* Modifier transforms on tablet view */
+.mod-inverted { transform: rotate(180deg); }
+.mod-mirrored { transform: scaleX(-1); }
+.mod-small { transform: scale(0.75); }
+.mod-enlarged { transform: scale(1.25); }
+.mod-uncertain { opacity: 0.5; }
+.mod-nonstandard { outline: 1px dashed var(--color-soviet-red); }
+.mod-distorted { outline: 1px dotted var(--color-warm-gray); }
+.mod-truncated { mask-image: linear-gradient(to right, black 70%, transparent); -webkit-mask-image: linear-gradient(to right, black 70%, transparent); }

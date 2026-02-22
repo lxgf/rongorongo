@@ -86,6 +86,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Supported Locales
+    |--------------------------------------------------------------------------
+    |
+    | List of locales available for the language switcher on both frontend
+    | and admin panel. To add a new language, add an entry here and create
+    | the corresponding translation files in the lang/ directory.
+    |
+    */
+
+    'supported_locales' => [
+        'en' => ['name' => 'English', 'native' => 'English'],
+        'ru' => ['name' => 'Russian', 'native' => 'Русский'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

@@ -1,0 +1,66 @@
+<?php
+
+return [
+    'site_title' => 'Rongorongo',
+    'nav' => [
+        'alphabet' => 'Alphabet',
+        'tablets' => 'Tablets',
+        'ligatures' => 'Ligatures',
+        'lines' => 'Lines',
+    ],
+    'alphabet' => [
+        'title' => 'Alphabet',
+        'search' => 'Search by code…',
+        'definition' => 'The Rongorongo script contains approximately 120 base signs, cataloged using the Barthel numbering system (001–799). Each glyph may appear in multiple renderings across the preserved tablets.',
+    ],
+    'glyph' => [
+        'renderings' => 'Renderings',
+        'occurrences' => 'Occurrences',
+        'ligatures' => 'Ligatures',
+        'tablet' => 'Tablet',
+        'side' => 'Side',
+        'line' => 'Line',
+        'position' => 'Pos.',
+        'rendering' => 'Rendering',
+        'modifiers' => 'Mod.',
+        'recto' => 'recto',
+        'verso' => 'verso',
+        'count_renderings' => 'renderings',
+        'count_occurrences' => 'occurrences',
+        'count_ligatures' => 'ligatures',
+    ],
+    'tablets' => [
+        'title' => 'Tablets',
+        'lines' => 'lines',
+        'signs' => 'signs',
+        'definition' => 'The Rongorongo corpus comprises approximately two dozen inscribed wooden artifacts from Rapa Nui (Easter Island). Each tablet is designated by a letter code and a traditional name.',
+    ],
+    'tablet' => [
+        'recto' => 'Recto (a)',
+        'verso' => 'Verso (b)',
+    ],
+    'ligatures' => [
+        'title' => 'Ligatures',
+        'search' => 'Search by code…',
+        'parts' => 'Components',
+        'occurrences' => 'occurrences',
+        'definition' => 'Compound signs are formed by combining two or more base glyphs into a single unit. They appear frequently in the preserved texts and may represent semantic or phonetic combinations.',
+    ],
+    'lines' => [
+        'title' => 'Lines',
+        'tablet' => 'Tablet',
+        'side' => 'Side',
+        'line' => 'Line',
+        'dir' => 'Dir.',
+        'signs' => 'signs',
+        'recto' => 'recto',
+        'verso' => 'verso',
+        'all_tablets' => 'All tablets',
+        'definition' => 'The texts are organized in lines following the boustrophedon pattern—alternating direction with each row. Each line contains a sequence of signs read in the indicated direction.',
+    ],
+    'stats' => [
+        'glyphs' => 'signs',
+        'tablets' => 'tablets',
+        'occurrences' => 'occurrences',
+    ],
+];
