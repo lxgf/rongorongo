@@ -14,6 +14,39 @@
         </div>
     </div>
 
+    {{-- Notation block --}}
+    <div class="mb-10">
+        <div class="flex items-center gap-4 mb-4">
+            <h2 class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap">
+                {{ __('front.ligatures.notation_title') }}
+            </h2>
+            <div class="flex-1 border-t border-rule"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            <div class="flex items-start gap-4">
+                <span class="text-[28px] font-bold leading-none text-soviet-red select-none mt-px">.</span>
+                <div class="border-l border-rule pl-4">
+                    <p class="text-[10px] font-medium tracking-[0.15em] uppercase mb-1">{{ __('front.ligatures.notation_dot_label') }}</p>
+                    <p class="text-sm text-ink/70 leading-relaxed">{{ __('front.ligatures.notation_dot') }}</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="text-[28px] font-bold leading-none text-soviet-red select-none mt-px">:</span>
+                <div class="border-l border-rule pl-4">
+                    <p class="text-[10px] font-medium tracking-[0.15em] uppercase mb-1">{{ __('front.ligatures.notation_colon_label') }}</p>
+                    <p class="text-sm text-ink/70 leading-relaxed">{{ __('front.ligatures.notation_colon') }}</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="text-lg font-semibold leading-none text-soviet-red select-none tabular-nums mt-0.5">001.006</span>
+                <div class="border-l border-rule pl-4">
+                    <p class="text-[10px] font-medium tracking-[0.15em] uppercase mb-1">{{ __('front.ligatures.notation_code_label') }}</p>
+                    <p class="text-sm text-ink/70 leading-relaxed">{{ __('front.ligatures.notation_code') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Search --}}
     <div class="flex justify-end mb-8">
         <div class="relative w-full sm:w-64">
