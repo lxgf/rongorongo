@@ -1,0 +1,90 @@
+services:
+
+  # ── Varnish cache (public entry point) ──────────────────────────────────────
+  varnish:
+    image: varnish:7.6
+    ports:
+      - "2020:80"
+    environment:
+      VARNISH_SIZE: 256m
+    volumes:
+      - ./docker/varnish/default.vcl:/etc/varnish/default.vcl:ro
+    depends_on:
+      - openresty
+    restart: unless-stopped
+    networks:
+      - app
+
+  # ── OpenResty (nginx-based web server) ──────────────────────────────────────
+  openresty:
+    image: openresty/openresty:1.27.1.2-11-bookworm
+    volumes:
+      - ./docker/openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - app_public:/var/www/html/public:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - app
+
+  # ── PHP-FPM application ──────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env.docker
+    volumes:
+      - app_public:/var/www/html/public
+      - storage_data:/var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app
+
+  # ── PostgreSQL 17 ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-rongorongo}
+      POSTGRES_USER: ${DB_USERNAME:-rongorongo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-rongorongo}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - app
+
+  # ── Redis 7 ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redis_data:
+  app_public:
+  storage_data:

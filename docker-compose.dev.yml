@@ -1,0 +1,50 @@
+services:
+
+  # Dev: expose on port 2030 instead of 2020
+  varnish:
+    ports:
+      - "2030:80"
+    environment:
+      VARNISH_SIZE: 64m
+
+  # Dev: mount source code directly, enable opcache revalidation
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env.docker
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      # Disable opcache timestamp validation in dev
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: "1"
+    volumes:
+      # Source code — bind mount (WSL2: stored in Linux filesystem for speed)
+      - ./app:/var/www/html/app
+      - ./bootstrap:/var/www/html/bootstrap
+      - ./config:/var/www/html/config
+      - ./database:/var/www/html/database
+      - ./resources:/var/www/html/resources
+      - ./routes:/var/www/html/routes
+      - ./tests:/var/www/html/tests
+      - ./artisan:/var/www/html/artisan
+      # Public assets shared with openresty
+      - app_public:/var/www/html/public
+      - storage_data:/var/www/html/storage
+      # Named volumes for vendor/node_modules — avoids slow Windows bind mounts
+      - vendor_data:/var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Dev: openresty reads from same public volume
+  openresty:
+    volumes:
+      - ./docker/openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - app_public:/var/www/html/public:ro
+
+volumes:
+  vendor_data:

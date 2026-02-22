@@ -6,6 +6,24 @@
 *.md diff=markdown
 *.php diff=php
 
+# Shell scripts and Docker — explicit LF (critical for Docker on Windows)
+*.sh text eol=lf
+*.vcl text eol=lf
+Dockerfile text eol=lf
+
+# Binary assets — no line ending conversion
+*.gif binary
+*.GIF binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.ico binary
+*.sqlite binary
+
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore

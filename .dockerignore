@@ -1,0 +1,47 @@
+# Dependencies — устанавливаются внутри контейнера
+/vendor
+/node_modules
+
+# Frontend build artifacts
+/public/build
+/public/hot
+/public/storage
+
+# Local dev files
+.env
+.env.*
+!.env.docker.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker files themselves (но не конфиги нужные для сборки)
+docker-compose*.yml
+docker/*.yml
+docker/openresty/
+docker/varnish/
+
+# Tests
+/tests
+
+# IDE / OS
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Logs
+storage/logs/*.log
+*.log
+
+# SQLite (используем PostgreSQL в Docker)
+database/database.sqlite
+
+# Node / build tools (оставляем package*.json и vite.config.js — нужны для npm ci && npm run build)
+postcss.config.js
+
+# Docs
+*.md
+README*
