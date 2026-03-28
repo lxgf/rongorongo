@@ -83,12 +83,12 @@
                 {{-- Glyph image --}}
                 <div class="flex items-center justify-center w-full h-24 px-1">
                     @if($tr->rendering_id && $tr->rendering)
-                        @php $img = $tr->rendering->glyph->images->first(); @endphp
+                        @php $imgPath = $tr->rendering->glyph->preferredImagePath(); @endphp
                         <a href="{{ route('glyph', $tr->rendering->glyph->barthel_code) }}"
                            class="flex items-center justify-center w-full h-full {{ $modClasses }}"
                            title="{{ $tr->rendering->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }}">
-                            @if($img)
-                                <img src="{{ asset($img->path) }}"
+                            @if($imgPath)
+                                <img src="{{ asset($imgPath) }}"
                                      class="max-h-20 w-auto object-contain"
                                      alt="{{ $tr->rendering->glyph->barthel_code }}"
                                      loading="lazy">
@@ -103,12 +103,12 @@
                         <div class="flex items-center justify-center gap-px w-full h-full {{ $modClasses }}"
                              title="{{ $tr->compoundGlyph->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }}">
                             @foreach($tr->compoundGlyph->parts as $part)
-                                @php $img = $part->glyph->images->first(); @endphp
+                                @php $imgPath = $part->glyph->preferredImagePath(); @endphp
                                 <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
                                    class="inline-block"
                                    title="{{ $part->glyph->barthel_code }}">
-                                    @if($img)
-                                        <img src="{{ asset($img->path) }}"
+                                    @if($imgPath)
+                                        <img src="{{ asset($imgPath) }}"
                                              class="max-h-16 w-auto object-contain"
                                              alt="{{ $part->glyph->barthel_code }}"
                                              loading="lazy">

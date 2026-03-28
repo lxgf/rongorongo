@@ -23,8 +23,11 @@
                         {{ $tablet->code }}
                     </span>
                     <div class="flex-1 border-t border-dotted border-warm-gray self-center hidden sm:block"></div>
-                    <span class="text-base sm:text-lg font-medium group-hover:text-soviet-red transition-colors">
-                        {{ $tablet->name }}
+                    <span class="text-right">
+                        <span class="block text-base sm:text-lg font-medium group-hover:text-soviet-red transition-colors">{{ $tablet->name }}</span>
+                        @if(app()->getLocale() === 'ru' && $tablet->name_ru)
+                            <span class="block text-[11px] text-warm-gray italic leading-tight">{{ $tablet->name_ru }}</span>
+                        @endif
                     </span>
                 </div>
                 <div class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-sm text-warm-gray ml-0 sm:ml-[3.5rem]">

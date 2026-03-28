@@ -28,8 +28,8 @@
     {{-- Glyph specimen --}}
     <div class="flex flex-col items-center mb-10">
         <div class="w-32 h-32 sm:w-40 sm:h-40 border border-ink flex items-center justify-center bg-white mb-4">
-            @if($glyph->images->first())
-                <img src="{{ asset($glyph->images->first()->path) }}"
+            @if($imgPath = $glyph->preferredImagePath())
+                <img src="{{ asset($imgPath) }}"
                      alt="{{ $glyph->barthel_code }}"
                      class="max-w-full max-h-full object-contain p-4">
             @else
@@ -55,8 +55,8 @@
             {{-- Rendering header --}}
             <div class="flex items-center gap-4 mb-3">
                 <div class="size-10 border border-ink bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
-                    @if($glyph->images->first())
-                        <img src="{{ asset($glyph->images->first()->path) }}"
+                    @if($imgPath = $glyph->preferredImagePath())
+                        <img src="{{ asset($imgPath) }}"
                              alt="{{ $rendering->code }}"
                              class="max-w-full max-h-full object-contain p-1"
                              loading="lazy">

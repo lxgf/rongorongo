@@ -42,13 +42,13 @@
             </div>
             <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
                 @foreach($groupGlyphs as $glyph)
-                    @php $img = $glyph->images->first(); @endphp
+                    @php $imgPath = $glyph->preferredImagePath(); @endphp
                     <a href="{{ route('glyph', $glyph->barthel_code) }}"
                        class="glyph-card group block border border-rule hover:border-soviet-red transition-colors"
                        data-code="{{ $glyph->barthel_code }}">
                         <div class="aspect-square bg-white flex items-center justify-center p-2 overflow-hidden">
-                            @if($img)
-                                <img src="{{ asset($img->path) }}"
+                            @if($imgPath)
+                                <img src="{{ asset($imgPath) }}"
                                      alt="{{ $glyph->barthel_code }}"
                                      class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-200"
                                      loading="lazy">

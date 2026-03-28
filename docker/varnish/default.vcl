@@ -22,6 +22,14 @@ sub vcl_recv {
         return (pass);
     }
 
+    # Forward original client info to backend
+    if (req.http.Host ~ ":(\d+)$") {
+        set req.http.X-Forwarded-Port = regsub(req.http.Host, "^.*:(\d+)$", "\1");
+    } else {
+        set req.http.X-Forwarded-Port = "80";
+    }
+    set req.http.X-Forwarded-Proto = "http";
+
     # Pass non-GET/HEAD requests
     if (req.method != "GET" && req.method != "HEAD") {
         return (pass);

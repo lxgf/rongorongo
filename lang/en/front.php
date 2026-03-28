@@ -43,6 +43,7 @@ return [
         'verso' => 'Verso (b)',
         'signs' => 'signs',
         'pos' => 'Pos.',
+        'photographs' => 'Photographs',
     ],
     'ligatures' => [
         'title' => 'Ligatures',

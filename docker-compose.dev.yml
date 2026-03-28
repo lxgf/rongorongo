@@ -34,6 +34,10 @@ services:
       - app_public:/var/www/html/public
       # Vite build output — bind mount over named volume so host builds are visible
       - ./public/build:/var/www/html/public/build
+      # Tablet photographs — bind mount so local downloads are visible
+      - ./public/tablet-photos:/var/www/html/public/tablet-photos
+      # SVG glyphs — bind mount so local downloads are visible
+      - ./public/glyphs:/var/www/html/public/glyphs
       - storage_data:/var/www/html/storage
       # Named volumes for vendor/node_modules — avoids slow Windows bind mounts
       - vendor_data:/var/www/html/vendor
@@ -49,6 +53,8 @@ services:
       - ./docker/openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - app_public:/var/www/html/public:ro
       - ./public/build:/var/www/html/public/build:ro
+      - ./public/tablet-photos:/var/www/html/public/tablet-photos:ro
+      - ./public/glyphs:/var/www/html/public/glyphs:ro
 
 volumes:
   vendor_data:

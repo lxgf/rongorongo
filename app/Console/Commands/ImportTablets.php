@@ -31,21 +31,34 @@ class ImportTablets extends Command
         'y' => 'is_distorted',
     ];
 
-    // Traditional tablet names
-    private const TABLET_NAMES = [
-        'A' => 'Tahua',
-        'B' => 'Aruku Kurenga',
-        'C' => 'Mamari',
-        'D' => 'Échancrée',
-        'E' => 'Keiti',
-        'G' => 'Small Santiago',
-        'H' => "Jaussen's String",
-        'K' => 'Réunion',
-        'N' => 'Small Vienna',
-        'P' => 'Apai',
-        'Q' => 'Unknown',
-        'R' => 'Small Washington',
-        'S' => 'Large Washington',
+    // Full rongorongo artifact catalog
+    private const TABLET_CATALOG = [
+        'A' => ['name_en' => 'Tahua',                      'name_ru' => 'Тахуа',                          'type' => 'tablet'],
+        'B' => ['name_en' => 'Aruku Kurenga',              'name_ru' => 'Аруку Куренга',                  'type' => 'tablet'],
+        'C' => ['name_en' => 'Mamari',                     'name_ru' => 'Мамари',                         'type' => 'tablet'],
+        'D' => ['name_en' => 'Échancrée',                  'name_ru' => 'Эшанкре',                        'type' => 'tablet'],
+        'E' => ['name_en' => 'Keiti',                      'name_ru' => 'Кеити',                          'type' => 'tablet'],
+        'F' => ['name_en' => 'Chauvet Fragment',           'name_ru' => 'Фрагмент Шове',                  'type' => 'fragment'],
+        'G' => ['name_en' => 'Small Santiago',      'name_ru' => 'Малая табличка Сантьяго',        'type' => 'tablet'],
+        'H' => ['name_en' => 'Large Santiago',      'name_ru' => 'Большая табличка Сантьяго',      'type' => 'tablet'],
+        'I' => ['name_en' => 'Santiago Staff',             'name_ru' => 'Жезл Сантьяго',                  'type' => 'staff'],
+        'J' => ['name_en' => 'Large Reimiro',              'name_ru' => 'Большое реймиро',                'type' => 'reimiro'],
+        'K' => ['name_en' => 'Small London',        'name_ru' => 'Малая Лондонская табличка',      'type' => 'tablet'],
+        'L' => ['name_en' => 'London Reimiro',             'name_ru' => 'Лондонское реймиро',             'type' => 'reimiro'],
+        'M' => ['name_en' => 'Large Vienna',        'name_ru' => 'Большая Венская табличка',       'type' => 'tablet'],
+        'N' => ['name_en' => 'Small Vienna',        'name_ru' => 'Малая Венская табличка',         'type' => 'tablet'],
+        'O' => ['name_en' => 'Berlin',              'name_ru' => 'Берлинская табличка',            'type' => 'tablet'],
+        'P' => ['name_en' => 'Great St. Petersburg','name_ru' => 'Большая Петербургская табличка', 'type' => 'tablet'],
+        'Q' => ['name_en' => 'Small St. Petersburg','name_ru' => 'Малая Петербургская табличка',   'type' => 'tablet'],
+        'R' => ['name_en' => 'Small Washington',    'name_ru' => 'Малая Вашингтонская табличка',   'type' => 'tablet'],
+        'S' => ['name_en' => 'Large Washington',    'name_ru' => 'Большая Вашингтонская табличка', 'type' => 'tablet'],
+        'T' => ['name_en' => 'Honolulu B-3629',     'name_ru' => 'Гонолулу фрагмент B-3629',       'type' => 'fragment'],
+        'U' => ['name_en' => 'Honolulu B-3623',     'name_ru' => 'Гонолулу фрагмент B-3623',       'type' => 'fragment'],
+        'V' => ['name_en' => 'Honolulu B-3622',     'name_ru' => 'Гонолулу фрагмент B-3622',       'type' => 'fragment'],
+        'W' => ['name_en' => 'Honolulu B-3621',     'name_ru' => 'Гонолулу фрагмент B-3621',       'type' => 'fragment'],
+        'X' => ['name_en' => 'Tangata Manu',               'name_ru' => 'Тангата Ману',                   'type' => 'statuette'],
+        'Y' => ['name_en' => 'Snuffbox',                   'name_ru' => 'Табакерка',                      'type' => 'snuffbox'],
+        'Z' => ['name_en' => 'Poike',               'name_ru' => 'Табличка Пойке',                 'type' => 'fragment'],
     ];
 
     // Cache for created records
@@ -85,9 +98,13 @@ class ImportTablets extends Command
             $totalPositions = 0;
 
             foreach ($data as $tabletCode => $lines) {
+                $catalog = self::TABLET_CATALOG[$tabletCode] ?? [];
                 $tablet = Tablet::create([
-                    'code' => $tabletCode,
-                    'name' => self::TABLET_NAMES[$tabletCode] ?? $tabletCode,
+                    'code'    => $tabletCode,
+                    'name'    => $catalog['name_en'] ?? $tabletCode,
+                    'name_en' => $catalog['name_en'] ?? null,
+                    'name_ru' => $catalog['name_ru'] ?? null,
+                    'type'    => $catalog['type'] ?? null,
                 ]);
 
                 $this->info("  Tablet {$tabletCode}: " . count($lines) . " lines");

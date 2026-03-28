@@ -74,12 +74,12 @@
                     {{-- Component glyphs --}}
                     <div class="flex items-center gap-1 flex-shrink-0">
                         @foreach($ligature->parts as $part)
-                            @php $img = $part->glyph->images->first(); @endphp
+                            @php $imgPath = $part->glyph->preferredImagePath(); @endphp
                             <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
                                class="size-8 border border-rule bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-soviet-red transition-colors"
                                title="{{ $part->glyph->barthel_code }}">
-                                @if($img)
-                                    <img src="{{ asset($img->path) }}"
+                                @if($imgPath)
+                                    <img src="{{ asset($imgPath) }}"
                                          class="max-w-full max-h-full object-contain p-0.5"
                                          alt="{{ $part->glyph->barthel_code }}"
                                          loading="lazy">

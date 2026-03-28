@@ -26,8 +26,8 @@
     {{-- Glyph specimen --}}
     <div class="flex flex-col items-center mb-10">
         <div class="w-40 h-40 sm:w-52 sm:h-52 border border-ink flex items-center justify-center bg-white mb-4">
-            @if($glyph->images->first())
-                <img src="{{ asset($glyph->images->first()->path) }}"
+            @if($imgPath = $glyph->preferredImagePath())
+                <img src="{{ asset($imgPath) }}"
                      alt="{{ $glyph->barthel_code }}"
                      class="max-w-full max-h-full object-contain p-4">
             @else
@@ -145,12 +145,12 @@
                     <div class="border border-rule p-3 hover:border-soviet-red transition-colors">
                         <div class="flex items-center gap-1 mb-2 min-h-[2rem]">
                             @foreach($ligature->parts as $part)
-                                @php $img = $part->glyph->images->first(); @endphp
+                                @php $imgPath = $part->glyph->preferredImagePath(); @endphp
                                 <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
                                    class="size-8 border border-rule bg-white flex items-center justify-center overflow-hidden flex-shrink-0 hover:border-soviet-red transition-colors"
                                    title="{{ $part->glyph->barthel_code }}">
-                                    @if($img)
-                                        <img src="{{ asset($img->path) }}"
+                                    @if($imgPath)
+                                        <img src="{{ asset($imgPath) }}"
                                              class="max-w-full max-h-full object-contain p-0.5"
                                              alt="{{ $part->glyph->barthel_code }}"
                                              loading="lazy">

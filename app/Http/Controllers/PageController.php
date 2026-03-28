@@ -78,6 +78,7 @@ class PageController extends Controller
     public function tablet(string $code)
     {
         $tablet = Tablet::with([
+            'images' => fn ($q) => $q->where('type', 'photo')->orderBy('sort_order'),
             'lines' => fn ($q) => $q->orderBy('side')->orderBy('line'),
             'lines.tabletRenderings' => fn ($q) => $q->orderBy('position'),
             'lines.tabletRenderings.rendering.glyph.images',

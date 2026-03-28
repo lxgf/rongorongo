@@ -90,7 +90,7 @@
 
             <div class="border-t border-ink">
                 @foreach($groupGlyphs as $glyph)
-                    @php $img = $glyph->images->first(); @endphp
+                    @php $imgPath = $glyph->preferredImagePath(); @endphp
                     <a href="{{ route('rendering', $glyph->barthel_code) }}"
                        class="glyph-rendering-row group block py-3 border-b border-rule hover:bg-cream-dark transition-colors -mx-4 px-4"
                        data-code="{{ $glyph->barthel_code }}"
@@ -99,8 +99,8 @@
                             {{-- Glyph image + code --}}
                             <div class="flex items-center gap-3 flex-shrink-0">
                                 <div class="size-10 border border-rule group-hover:border-soviet-red bg-white flex items-center justify-center overflow-hidden transition-colors flex-shrink-0">
-                                    @if($img)
-                                        <img src="{{ asset($img->path) }}"
+                                    @if($imgPath)
+                                        <img src="{{ asset($imgPath) }}"
                                              alt="{{ $glyph->barthel_code }}"
                                              class="max-w-full max-h-full object-contain p-1 group-hover:scale-110 transition-transform duration-200"
                                              loading="lazy">

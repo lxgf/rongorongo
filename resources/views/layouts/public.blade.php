@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-cream text-ink font-sans antialiased">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,5 +90,7 @@
         </footer>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fslightbox@3.4.1/index.min.js" defer></script>
 </body>
 </html>

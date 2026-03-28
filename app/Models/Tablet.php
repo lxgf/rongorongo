@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Tablet extends Model
 {
-    protected $fillable = ['code', 'name', 'location', 'description'];
+    protected $fillable = ['code', 'name', 'name_en', 'name_ru', 'type', 'location', 'description'];
 
     public function lines(): HasMany
     {
