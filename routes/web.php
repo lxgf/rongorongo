@@ -3,15 +3,15 @@
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [PageController::class, 'alphabet'])->name('alphabet');
+Route::get('/{page?}', [PageController::class, 'alphabet'])->name('alphabet')->where('page', '[1-9]');
 Route::get('/glyph/{code}', [PageController::class, 'glyph'])->name('glyph');
 Route::get('/tablets', [PageController::class, 'tablets'])->name('tablets');
 Route::get('/tablet/{code}', [PageController::class, 'tablet'])->name('tablet');
 
-Route::get('/ligatures', [PageController::class, 'ligatures'])->name('ligatures');
-Route::get('/renderings', [PageController::class, 'renderings'])->name('renderings');
-Route::get('/renderings/{code}', [PageController::class, 'rendering'])->name('rendering');
-Route::get('/lines', [PageController::class, 'lines'])->name('lines');
+Route::get('/ligatures/{page?}', [PageController::class, 'ligatures'])->name('ligatures')->where('page', '[0-9]+');
+Route::get('/renderings/{page?}', [PageController::class, 'renderings'])->name('renderings')->where('page', '[1-9]');
+Route::get('/renderings/{code}', [PageController::class, 'rendering'])->name('rendering')->where('code', '\d{3}');
+Route::get('/lines/{tablet?}', [PageController::class, 'lines'])->name('lines')->where('tablet', '[A-Z]');
 Route::get('/line/{tablet}/{side}/{line}', [PageController::class, 'line'])->name('line');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');

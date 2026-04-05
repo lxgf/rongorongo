@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', __('front.lines.title') . ' — ' . __('front.site_title'))
+@section('title', __('front.lines.title') . ($selectedTablet ? ' — ' . $selectedTablet->code : '') . ' — ' . __('front.site_title'))
 
 @section('content')
     {{-- Definition block --}}
@@ -14,76 +14,64 @@
         </div>
     </div>
 
-    {{-- Tablet filter --}}
-    <div class="flex justify-end mb-8">
-        <div class="relative">
-            <select id="tablet-filter"
-                    onchange="window.location = this.value ? '?tablet=' + this.value : '{{ route('lines') }}'"
-                    class="bg-transparent border-b border-ink pb-1 text-sm focus:outline-none
-                           focus:border-soviet-red transition-colors cursor-pointer pr-6
-                           appearance-none">
-                <option value="">{{ __('front.lines.all_tablets') }}</option>
-                @foreach($tablets as $t)
-                    <option value="{{ $t->code }}" {{ request('tablet') === $t->code ? 'selected' : '' }}>
-                        {{ $t->code }} — {{ $t->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+    {{-- Tablet selector --}}
+    <div class="flex items-center gap-px mb-8 flex-wrap">
+        @foreach($tablets as $t)
+            @php $isCurrent = $selectedTablet && $selectedTablet->code === $t->code; @endphp
+            <a href="{{ route('lines', ['tablet' => $t->code]) }}"
+               class="w-10 h-10 flex items-center justify-center border transition-colors
+                      {{ $isCurrent
+                          ? 'bg-soviet-red text-white border-soviet-red font-semibold'
+                          : 'bg-white text-ink border-rule hover:border-soviet-red hover:text-soviet-red' }}">
+                <span class="text-[13px] tabular-nums leading-none">{{ $t->code }}</span>
+            </a>
+        @endforeach
     </div>
 
-    {{-- Lines grouped by tablet --}}
-    @foreach($lines as $tabletCode => $tabletLines)
-        <section class="mb-10">
-            <div class="flex items-center gap-4 mb-4">
-                <a href="{{ route('tablet', $tabletCode) }}"
-                   class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap hover:text-soviet-red transition-colors">
-                    {{ $tabletLines->first()->tablet->name }}
-                    <span class="text-soviet-red ml-1">{{ $tabletCode }}</span>
-                </a>
-                <div class="flex-1 border-t border-ink"></div>
-            </div>
+    @if($selectedTablet)
+        {{-- Tablet header --}}
+        <div class="flex items-baseline gap-3 mb-6">
+            <span class="text-2xl font-semibold text-soviet-red">{{ $selectedTablet->code }}</span>
+            <span class="text-lg font-semibold">{{ $selectedTablet->name }}</span>
+            @if($selectedTablet->location)
+                <span class="text-sm text-warm-gray hidden sm:inline">&middot; {{ $selectedTablet->location }}</span>
+            @endif
+        </div>
 
-            {{-- Table header --}}
-            <div class="hidden sm:flex items-center gap-3 py-1.5 text-[10px] font-medium tracking-[0.05em] uppercase text-warm-gray border-b border-ink mb-1">
-                <div class="w-8 text-right flex-shrink-0">#</div>
-                <div class="w-16 text-center flex-shrink-0">{{ __('front.lines.side') }}</div>
-                <div class="w-10 text-center flex-shrink-0">{{ __('front.lines.dir') }}</div>
-                <div class="flex-1">{{ __('front.lines.signs') }}</div>
-                <div class="w-16"></div>
-            </div>
-
-            @foreach($tabletLines as $line)
-                <div class="flex items-center gap-3 py-2 border-b border-rule hover:bg-cream-dark transition-colors">
-                    {{-- Line number --}}
-                    <div class="flex-shrink-0 w-8 text-right text-[11px] text-warm-gray font-medium tabular-nums">
-                        {{ $line->line }}
-                    </div>
-
-                    {{-- Side --}}
-                    <div class="flex-shrink-0 w-16 text-center text-[10px] text-warm-gray">
-                        {{ $line->side === 0 ? __('front.lines.recto') : __('front.lines.verso') }}
-                    </div>
-
-                    {{-- Direction arrow --}}
-                    <div class="flex-shrink-0 w-10 text-center text-[11px] text-warm-gray">
-                        {!! $line->direction === 'ltr' ? '&rarr;' : '&larr;' !!}
-                    </div>
-
-                    {{-- Sign count --}}
-                    <div class="flex-1 text-[11px] tabular-nums text-ink">
-                        {{ $line->tablet_renderings_count }}
-                    </div>
-
-                    {{-- View link --}}
-                    <div class="flex-shrink-0 text-right pr-1">
-                        <a href="{{ route('line', [$tabletCode, $line->side === 0 ? 'r' : 'v', $line->line]) }}"
-                           class="text-[10px] tracking-[0.05em] uppercase font-medium text-deep-blue hover:text-soviet-red transition-colors">
-                            {{ __('front.lines.view_line') }} &rarr;
-                        </a>
-                    </div>
+        {{-- Sides + lines --}}
+        @foreach($sides as $sideNum => $sideLines)
+            <section class="mb-8">
+                <div class="flex items-center gap-4 mb-3">
+                    <h2 class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap">
+                        {{ $sideLines->first()->sideLabel }}
+                    </h2>
+                    <span class="text-[10px] text-warm-gray tabular-nums">{{ $sideLines->count() }} {{ __('front.lines.line') }}</span>
+                    <div class="flex-1 border-t border-ink"></div>
                 </div>
-            @endforeach
-        </section>
-    @endforeach
+
+                <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                    @foreach($sideLines as $line)
+                        @php
+                            $sideChar = chr(ord('a') + $line->side);
+                        @endphp
+                        <a href="{{ route('line', [$selectedTablet->code, $sideChar, $line->line]) }}"
+                           class="group border border-rule hover:border-soviet-red transition-colors bg-white">
+                            <div class="py-3 px-2 text-center">
+                                <span class="block text-lg font-semibold tabular-nums group-hover:text-soviet-red transition-colors">{{ $line->line }}</span>
+                                <span class="block text-[9px] text-warm-gray tabular-nums mt-0.5">{{ $line->tablet_renderings_count }} {{ __('front.lines.signs') }}</span>
+                            </div>
+                            <div class="border-t border-rule px-2 py-1 text-center">
+                                <span class="text-[9px] text-warm-gray">
+                                    {!! $line->direction === 'ltr' ? '&rarr;' : '&larr;' !!}
+                                </span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endforeach
+    @else
+        {{-- No tablet selected — prompt --}}
+        <p class="text-sm text-warm-gray">{{ __('front.lines.select_tablet') }}</p>
+    @endif
 @endsection

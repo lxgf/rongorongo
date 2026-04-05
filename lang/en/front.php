@@ -49,6 +49,7 @@ return [
         'title' => 'Ligatures',
         'search' => 'Search by code…',
         'parts' => 'Components',
+        'parts_label' => 'part',
         'occurrences' => 'occurrences',
         'definition' => 'Compound signs are formed by combining two or more base glyphs into a single unit. They appear frequently in the preserved texts and may represent semantic or phonetic combinations.',
         'notation_title' => 'Notation',
@@ -110,6 +111,7 @@ return [
         'line_title' => 'Line :line',
         'direction_ltr' => 'left to right',
         'direction_rtl' => 'right to left',
+        'select_tablet' => 'Select a tablet above to browse its lines.',
     ],
     'colophon' => [
         'disclaimer' => 'This is an amateur research project. The author is not affiliated with any academic institution. The data may contain errors and inaccuracies.',
