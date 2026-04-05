@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.about.title') . ' — ' . __('front.site_title'))
+@section('title', 'About — Rongorongo Research Platform')
+@section('meta_description', 'Open-source research platform for the Rongorongo script — the undeciphered writing system of Rapa Nui (Easter Island). Corpus of ' . $stats['glyphs'] . ' glyphs, ' . $stats['occurrences'] . ' occurrences, SVG renderings.')
+@section('canonical', route('about'))
 
 @section('content')
     {{-- Hero --}}

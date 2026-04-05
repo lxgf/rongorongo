@@ -1,6 +1,10 @@
 @extends('layouts.public')
 
-@section('title', __('front.renderings.title') . ' ' . $glyph->barthel_code . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Glyph ' . $glyph->barthel_code . ' Renderings — Script Variants')
+@section('meta_description', 'All graphic renderings of Rongorongo glyph ' . $glyph->barthel_code . '. ' . $glyph->renderings->count() . ' variants with ' . $totalOccurrences . ' occurrences across Easter Island tablets. SVG specimen sheet.')
+@section('canonical', route('rendering', $glyph->barthel_code))
+@section('og_type', 'article')
+@section('og_image', $glyph->preferredImagePath() ? asset($glyph->preferredImagePath()) : '')
 
 @section('content')
     {{-- Back + Prev/Next --}}

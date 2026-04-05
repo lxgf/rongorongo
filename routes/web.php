@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/{page?}', [PageController::class, 'alphabet'])->name('alphabet')->where('page', '[1-9]');
 Route::get('/glyph/{code}', [PageController::class, 'glyph'])->name('glyph');

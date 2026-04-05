@@ -1,6 +1,10 @@
 @extends('layouts.public')
 
-@section('title', $tablet->code . ' ' . $tablet->name . ' — ' . __('front.site_title'))
+@section('title', 'Tablet ' . $tablet->code . ' ' . $tablet->name . ' — Rongorongo Easter Island Artifact')
+@section('meta_description', $tablet->name . ' (Tablet ' . $tablet->code . ') — Rongorongo inscription from Rapa Nui. ' . $tablet->lines->count() . ' lines, ' . $tablet->lines->sum(fn($l) => $l->tabletRenderings->count()) . ' glyphs in boustrophedon.' . ($tablet->location ? ' ' . $tablet->location . '.' : ''))
+@section('canonical', route('tablet', $tablet->code))
+@section('og_type', 'article')
+@section('og_image', $tablet->images->count() ? asset($tablet->images->first()->path) : '')
 
 @section('content')
     {{-- Header --}}

@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.ligatures.title') . ($pagination['currentPage'] > 1 ? ' — ' . $pagination['currentPage'] : '') . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Ligatures' . ($pagination['currentPage'] > 1 ? ' — Page ' . $pagination['currentPage'] : '') . ' — Compound Glyphs')
+@section('meta_description', 'Rongorongo compound glyphs (ligatures) from the Easter Island script. ' . $pagination['total'] . ' fused sign combinations. Page ' . $pagination['currentPage'] . ' of ' . $pagination['totalPages'] . '.')
+@section('canonical', $pagination['currentPage'] === 1 ? route('ligatures') : route('ligatures', ['page' => $pagination['currentPage']]))
 
 @section('content')
     {{-- Definition block --}}

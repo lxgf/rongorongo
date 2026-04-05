@@ -1,6 +1,10 @@
 @extends('layouts.public')
 
-@section('title', $tablet->code . ' ' . ($line->side === 0 ? 'r' : 'v') . $line->line . ' — ' . __('front.site_title'))
+@php $sideLabel = $line->side === 0 ? 'recto' : 'verso'; @endphp
+@section('title', 'Tablet ' . $tablet->code . ' ' . $sideLabel . ' line ' . $line->line . ' — Rongorongo Script')
+@section('meta_description', 'Rongorongo tablet ' . $tablet->code . ' (' . $tablet->name . '), ' . $sideLabel . ' line ' . $line->line . '. ' . $line->tabletRenderings->count() . ' glyphs with individual SVG renderings from the Easter Island writing system.')
+@section('canonical', route('line', [$tablet->code, chr(ord('a') + $line->side), $line->line]))
+@section('og_type', 'article')
 
 @section('content')
     {{-- Prev / Next navigation --}}

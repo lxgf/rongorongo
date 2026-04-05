@@ -1,6 +1,10 @@
 @extends('layouts.public')
 
-@section('title', $glyph->barthel_code . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Glyph ' . $glyph->barthel_code . ' — Easter Island Script Sign')
+@section('meta_description', 'Rongorongo glyph ' . $glyph->barthel_code . ' (Barthel code) from the Easter Island undeciphered script. ' . $glyph->renderings->count() . ' graphic variants, ' . $occurrences->count() . ' occurrences across Rapa Nui tablets.')
+@section('canonical', route('glyph', $glyph->barthel_code))
+@section('og_type', 'article')
+@section('og_image', $glyph->preferredImagePath() ? asset($glyph->preferredImagePath()) : '')
 
 @section('content')
     {{-- Prev / Next navigation --}}

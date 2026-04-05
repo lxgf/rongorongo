@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.alphabet.title') . ' ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Easter Island Script Catalog')
+@section('meta_description', 'Rongorongo script glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the undeciphered Easter Island writing system with SVG renderings. Barthel catalog.')
+@section('canonical', $pagination['currentIndex'] === 0 ? route('alphabet') : route('alphabet', ['page' => $pagination['currentIndex'] + 1]))
 
 @section('content')
     {{-- Definition block --}}

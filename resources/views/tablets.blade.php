@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.tablets.title') . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Tablets — Easter Island Inscribed Artifacts')
+@section('meta_description', 'Complete list of ' . $tablets->count() . ' Rongorongo tablets and inscribed artifacts from Rapa Nui (Easter Island). Locations, photographs, and glyph inventories for each artifact.')
+@section('canonical', route('tablets'))
 
 @section('content')
     {{-- Definition block — Soviet primer rule style --}}

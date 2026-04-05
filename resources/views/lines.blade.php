@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.lines.title') . ($selectedTablet ? ' — ' . $selectedTablet->code : '') . ' — ' . __('front.site_title'))
+@section('title', $selectedTablet ? 'Tablet ' . $selectedTablet->code . ' Lines — Rongorongo Script' : 'Rongorongo Lines — Browse Easter Island Tablets')
+@section('meta_description', $selectedTablet ? 'Lines of Rongorongo tablet ' . $selectedTablet->code . ' (' . $selectedTablet->name . '). ' . $sides->flatten()->count() . ' lines written in reverse boustrophedon.' : 'Browse lines of Rongorongo tablets from Rapa Nui. Reverse boustrophedon writing system.')
+@section('canonical', $selectedTablet ? route('lines', ['tablet' => $selectedTablet->code]) : route('lines'))
 
 @section('content')
     {{-- Definition block --}}

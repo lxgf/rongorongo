@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', __('front.renderings.title') . ' — ' . __('front.site_title'))
+@section('title', 'Rongorongo Renderings ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Glyph Variants')
+@section('meta_description', 'Graphic variants of Rongorongo glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the Easter Island script with ' . $totalRenderings . ' rendering variants cataloged by Barthel.')
+@section('canonical', $pagination['currentIndex'] === 0 ? route('renderings') : route('renderings', ['page' => $pagination['currentIndex'] + 1]))
 
 @section('content')
     {{-- Definition block --}}
