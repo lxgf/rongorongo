@@ -17,7 +17,6 @@
 /public/build
 /public/hot
 /public/storage
-/public/svg
 /public/renderings
 /storage/*.key
 /storage/pail
