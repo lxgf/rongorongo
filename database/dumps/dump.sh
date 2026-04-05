@@ -10,12 +10,19 @@ DUMP_FILE="$SCRIPT_DIR/corpus.sql"
 
 cd "$PROJECT_DIR"
 
+COMPOSE="docker compose"
+if [ -f docker-compose.dev.yml ]; then
+  COMPOSE="docker compose -f docker-compose.yml -f docker-compose.dev.yml"
+fi
+
 echo "Dumping corpus data..."
 
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T db pg_dump \
+$COMPOSE exec -T db pg_dump \
   -U rongorongo \
   --no-owner \
   --no-privileges \
+  --clean \
+  --if-exists \
   --exclude-table=users \
   --exclude-table=sessions \
   --exclude-table=personal_access_tokens \

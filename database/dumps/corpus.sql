@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict BBBs3HAp6V2XqlPC5Ynq1ZPJeYVADqm9Hskb0SCCOOgHKhTn2efnVEmEDC9dJwz
+\restrict eNhGcHp2iYxaesL3zlSnYkbiVbC1YOlDXJQD5Z75habXrkzMjrV3cWxSFfGQcxn
 
 -- Dumped from database version 17.9
 -- Dumped by pg_dump version 17.9
@@ -19,6 +19,62 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE IF EXISTS ONLY public.tablet_renderings DROP CONSTRAINT IF EXISTS tablet_renderings_tablet_line_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.tablet_renderings DROP CONSTRAINT IF EXISTS tablet_renderings_rendering_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.tablet_renderings DROP CONSTRAINT IF EXISTS tablet_renderings_compound_glyph_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.tablet_lines DROP CONSTRAINT IF EXISTS tablet_lines_tablet_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.renderings DROP CONSTRAINT IF EXISTS renderings_glyph_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.compound_glyph_parts DROP CONSTRAINT IF EXISTS compound_glyph_parts_glyph_id_foreign;
+ALTER TABLE IF EXISTS ONLY public.compound_glyph_parts DROP CONSTRAINT IF EXISTS compound_glyph_parts_compound_glyph_id_foreign;
+DROP INDEX IF EXISTS public.tablet_renderings_rendering_id_index;
+DROP INDEX IF EXISTS public.tablet_renderings_compound_glyph_id_index;
+DROP INDEX IF EXISTS public.images_imageable_type_imageable_id_index;
+DROP INDEX IF EXISTS public.compound_glyph_parts_glyph_id_index;
+ALTER TABLE IF EXISTS ONLY public.tablets DROP CONSTRAINT IF EXISTS tablets_pkey;
+ALTER TABLE IF EXISTS ONLY public.tablet_renderings DROP CONSTRAINT IF EXISTS tablet_renderings_tablet_line_id_position_unique;
+ALTER TABLE IF EXISTS ONLY public.tablet_renderings DROP CONSTRAINT IF EXISTS tablet_renderings_pkey;
+ALTER TABLE IF EXISTS ONLY public.tablet_lines DROP CONSTRAINT IF EXISTS tablet_lines_tablet_id_side_line_unique;
+ALTER TABLE IF EXISTS ONLY public.tablet_lines DROP CONSTRAINT IF EXISTS tablet_lines_pkey;
+ALTER TABLE IF EXISTS ONLY public.renderings DROP CONSTRAINT IF EXISTS renderings_pkey;
+ALTER TABLE IF EXISTS ONLY public.renderings DROP CONSTRAINT IF EXISTS renderings_code_unique;
+ALTER TABLE IF EXISTS ONLY public.migrations DROP CONSTRAINT IF EXISTS migrations_pkey;
+ALTER TABLE IF EXISTS ONLY public.images DROP CONSTRAINT IF EXISTS images_pkey;
+ALTER TABLE IF EXISTS ONLY public.glyphs DROP CONSTRAINT IF EXISTS glyphs_pkey;
+ALTER TABLE IF EXISTS ONLY public.glyphs DROP CONSTRAINT IF EXISTS glyphs_barthel_code_unique;
+ALTER TABLE IF EXISTS ONLY public.compound_glyphs DROP CONSTRAINT IF EXISTS compound_glyphs_pkey;
+ALTER TABLE IF EXISTS ONLY public.compound_glyphs DROP CONSTRAINT IF EXISTS compound_glyphs_code_unique;
+ALTER TABLE IF EXISTS ONLY public.compound_glyph_parts DROP CONSTRAINT IF EXISTS compound_glyph_parts_pkey;
+ALTER TABLE IF EXISTS ONLY public.compound_glyph_parts DROP CONSTRAINT IF EXISTS compound_glyph_parts_compound_glyph_id_order_unique;
+ALTER TABLE IF EXISTS public.tablets ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.tablet_renderings ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.tablet_lines ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.renderings ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.migrations ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.images ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.glyphs ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.compound_glyphs ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS public.compound_glyph_parts ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE IF EXISTS public.users_id_seq;
+DROP SEQUENCE IF EXISTS public.tablets_id_seq;
+DROP TABLE IF EXISTS public.tablets;
+DROP SEQUENCE IF EXISTS public.tablet_renderings_id_seq;
+DROP TABLE IF EXISTS public.tablet_renderings;
+DROP SEQUENCE IF EXISTS public.tablet_lines_id_seq;
+DROP TABLE IF EXISTS public.tablet_lines;
+DROP SEQUENCE IF EXISTS public.renderings_id_seq;
+DROP TABLE IF EXISTS public.renderings;
+DROP SEQUENCE IF EXISTS public.migrations_id_seq;
+DROP TABLE IF EXISTS public.migrations;
+DROP SEQUENCE IF EXISTS public.jobs_id_seq;
+DROP SEQUENCE IF EXISTS public.images_id_seq;
+DROP TABLE IF EXISTS public.images;
+DROP SEQUENCE IF EXISTS public.glyphs_id_seq;
+DROP TABLE IF EXISTS public.glyphs;
+DROP SEQUENCE IF EXISTS public.failed_jobs_id_seq;
+DROP SEQUENCE IF EXISTS public.compound_glyphs_id_seq;
+DROP TABLE IF EXISTS public.compound_glyphs;
+DROP SEQUENCE IF EXISTS public.compound_glyph_parts_id_seq;
+DROP TABLE IF EXISTS public.compound_glyph_parts;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -36427,5 +36483,5 @@ ALTER TABLE ONLY public.tablet_renderings
 -- PostgreSQL database dump complete
 --
 
-\unrestrict BBBs3HAp6V2XqlPC5Ynq1ZPJeYVADqm9Hskb0SCCOOgHKhTn2efnVEmEDC9dJwz
+\unrestrict eNhGcHp2iYxaesL3zlSnYkbiVbC1YOlDXJQD5Z75habXrkzMjrV3cWxSFfGQcxn
 

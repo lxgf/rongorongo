@@ -15,21 +15,22 @@ fi
 
 cd "$PROJECT_DIR"
 
+COMPOSE="docker compose"
+if [ -f docker-compose.dev.yml ]; then
+  COMPOSE="docker compose -f docker-compose.yml -f docker-compose.dev.yml"
+fi
+
+echo "Running migrations..."
+$COMPOSE exec -T app php artisan migrate --force
+
 echo "Restoring corpus data from $DUMP_FILE..."
-
-# Run migrations first to ensure schema exists
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T app php artisan migrate --force
-
-# Restore dump (drop + recreate tables from dump)
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T db psql \
+$COMPOSE exec -T db psql \
   -U rongorongo \
   -d rongorongo \
   --single-transaction \
   < "$DUMP_FILE"
 
-echo "Done. Seeding admin user..."
-
-# Re-seed user (excluded from dump)
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T app php artisan db:seed --force
+echo "Seeding admin user..."
+$COMPOSE exec -T app php artisan db:seed --force
 
 echo "Restore complete."
