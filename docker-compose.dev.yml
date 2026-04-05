@@ -38,6 +38,8 @@ services:
       - ./public/tablet-photos:/var/www/html/public/tablet-photos
       # SVG glyphs — bind mount so local downloads are visible
       - ./public/glyphs:/var/www/html/public/glyphs
+      # Rendering SVGs — bind mount so imported SVGs are visible
+      - ./public/svg:/var/www/html/public/svg
       - storage_data:/var/www/html/storage
       # Named volumes for vendor/node_modules — avoids slow Windows bind mounts
       - vendor_data:/var/www/html/vendor
@@ -55,6 +57,7 @@ services:
       - ./public/build:/var/www/html/public/build:ro
       - ./public/tablet-photos:/var/www/html/public/tablet-photos:ro
       - ./public/glyphs:/var/www/html/public/glyphs:ro
+      - ./public/svg:/var/www/html/public/svg:ro
 
 volumes:
   vendor_data:

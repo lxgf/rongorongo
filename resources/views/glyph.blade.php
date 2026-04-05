@@ -76,57 +76,58 @@
         </section>
     @endif
 
-    {{-- Occurrences --}}
+    {{-- Occurrences — compact specimen sheet --}}
     @if($occurrences->isNotEmpty())
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <h2 class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap">
                     {{ __('front.glyph.occurrences') }}
                 </h2>
+                <span class="text-[10px] text-warm-gray tabular-nums">{{ $occurrences->count() }}</span>
                 <div class="flex-1 border-t border-ink"></div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-ink text-left">
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.tablet') }}</th>
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.tablet_code') }}</th>
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.side') }}</th>
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.line') }}</th>
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.position') }}</th>
-                            <th class="py-2 pr-4 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.rendering') }}</th>
-                            <th class="py-2 font-medium text-[10px] tracking-[0.1em] uppercase">{{ __('front.glyph.modifiers') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($occurrences as $occ)
-                            @php
-                                $modifierKeys = ['is_inverted', 'is_mirrored', 'is_small', 'is_enlarged', 'is_truncated', 'is_distorted', 'is_uncertain', 'is_nonstandard'];
-                                $activeModifiers = collect($modifierKeys)->filter(fn($k) => $occ->$k)->map(fn($k) => __('front.renderings.modifiers.' . $k))->values();
-                            @endphp
-                            <tr class="border-b border-rule hover:bg-cream-dark transition-colors">
-                                <td class="py-1.5 pr-4">
-                                    <a href="{{ route('tablet', $occ->tabletLine->tablet->code) }}"
-                                       class="hover:text-soviet-red transition-colors">
-                                        {{ $occ->tabletLine->tablet->name }}
-                                    </a>
-                                </td>
-                                <td class="py-1.5 pr-4 tabular-nums text-warm-gray">
-                                    {{ $occ->tabletLine->tablet->code }}
-                                </td>
-                                <td class="py-1.5 pr-4 text-warm-gray">
-                                    {{ $occ->tabletLine->side === 0 ? __('front.glyph.recto') : __('front.glyph.verso') }}
-                                </td>
-                                <td class="py-1.5 pr-4 tabular-nums">{{ $occ->tabletLine->line }}</td>
-                                <td class="py-1.5 pr-4 tabular-nums">{{ $occ->position }}</td>
-                                <td class="py-1.5 pr-4 tabular-nums">{{ $occ->rendering->code }}</td>
-                                <td class="py-1.5 text-soviet-red text-xs font-medium">
-                                    {{ $activeModifiers->join(', ') }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+
+            <div class="space-y-3">
+                @foreach($occurrences->groupBy(fn($o) => $o->tabletLine->tablet->code) as $tabletCode => $tabletOccs)
+                    <div class="flex items-start gap-3">
+                        {{-- Tablet label --}}
+                        <div class="w-8 shrink-0 pt-1.5 text-right">
+                            <span class="text-[11px] font-semibold text-soviet-red tabular-nums leading-none">{{ $tabletCode }}</span>
+                            <span class="block text-[8px] text-warm-gray tabular-nums leading-none mt-0.5">{{ $tabletOccs->count() }}</span>
+                        </div>
+
+                        {{-- Glyph specimens --}}
+                        <div class="flex flex-wrap gap-px flex-1 min-w-0">
+                            @foreach($tabletOccs as $occ)
+                                @php
+                                    $imgPath = $occ->preferredImagePath();
+                                    $sideChar = chr(ord('a') + $occ->tabletLine->side);
+                                    $loc = $sideChar . $occ->tabletLine->line . ':' . $occ->position;
+                                    $modSymbols = collect([
+                                        'is_inverted' => 'f', 'is_mirrored' => 'b', 'is_small' => 's',
+                                        'is_enlarged' => 'V', 'is_truncated' => 't', 'is_distorted' => 'y',
+                                        'is_uncertain' => '?', 'is_nonstandard' => 'x',
+                                    ])->filter(fn($sym, $field) => $occ->$field)->values()->join('');
+                                @endphp
+                                <a href="{{ route('line', [$tabletCode, $sideChar, $occ->tabletLine->line]) }}"
+                                   class="group relative size-10 bg-white hover:bg-cream-dark flex items-center justify-center transition-colors
+                                          {{ $modSymbols ? 'ring-1 ring-inset ring-soviet-red/20' : '' }}"
+                                   title="{{ $occ->rendering->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }} — {{ $tabletCode }}{{ $loc }}">
+                                    @if($imgPath)
+                                        <img src="{{ asset($imgPath) }}"
+                                             class="size-8 object-contain group-hover:scale-110 transition-transform"
+                                             alt="{{ $loc }}"
+                                             loading="lazy">
+                                    @else
+                                        <span class="text-[8px] text-warm-gray tabular-nums">{{ $occ->rendering->code }}</span>
+                                    @endif
+                                    <span class="absolute inset-x-0 -bottom-3.5 text-center text-[7px] tabular-nums text-warm-gray leading-none
+                                                 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">{{ $loc }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </section>
     @endif

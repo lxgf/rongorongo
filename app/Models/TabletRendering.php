@@ -56,4 +56,24 @@ class TabletRendering extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    /**
+     * Get the preferred image path for this tablet rendering.
+     * Priority: own SVG image > glyph SVG > glyph DB image.
+     */
+    public function preferredImagePath(): ?string
+    {
+        // Own SVG (specific occurrence from kohaumotu.org)
+        $own = $this->images->first();
+        if ($own) {
+            return $own->path;
+        }
+
+        // Fall back to glyph-level image
+        if ($this->rendering_id && $this->rendering) {
+            return $this->rendering->glyph->preferredImagePath();
+        }
+
+        return null;
+    }
 }

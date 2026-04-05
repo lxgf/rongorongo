@@ -73,27 +73,44 @@
                 </span>
             </div>
 
-            {{-- Occurrences --}}
+            {{-- Occurrences — visual grid by tablet --}}
             @if($rendering->tabletRenderings->isNotEmpty())
-                <div class="space-y-0">
-                    @foreach($rendering->tabletRenderings as $occ)
-                        @php
-                            $modifierKeys = ['is_inverted', 'is_mirrored', 'is_small', 'is_enlarged', 'is_truncated', 'is_distorted', 'is_uncertain', 'is_nonstandard'];
-                            $activeModifiers = collect($modifierKeys)->filter(fn($k) => $occ->$k)->map(fn($k) => __('front.renderings.modifiers.' . $k))->values();
-                            $modifierText = $activeModifiers->isNotEmpty() ? $activeModifiers->join(', ') : null;
-                            $source = __('front.renderings.from_tablet', [
-                                'tablet' => $occ->tabletLine->tablet->name . ' (' . $occ->tabletLine->tablet->code . ')',
-                                'line' => ($occ->tabletLine->side === 0 ? __('front.glyph.recto') : __('front.glyph.verso')) . ' ' . $occ->tabletLine->line,
-                                'position' => $occ->position,
-                            ]);
-                        @endphp
-                        <div class="py-1.5 border-b border-rule/50 flex flex-wrap items-baseline gap-x-2 text-sm hover:bg-cream-dark transition-colors -mx-4 px-4">
-                            @if($modifierText)
-                                <span class="font-medium text-soviet-red">{{ $modifierText }}</span>
-                                <span class="text-warm-gray">&mdash;</span>
-                            @endif
-                            <a href="{{ route('tablet', $occ->tabletLine->tablet->code) }}"
-                               class="text-ink/70 hover:text-soviet-red transition-colors">{{ $source }}</a>
+                <div class="space-y-2">
+                    @foreach($rendering->tabletRenderings->groupBy(fn($o) => $o->tabletLine->tablet->code) as $tabletCode => $tabletOccs)
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 shrink-0 pt-1.5 text-right">
+                                <span class="text-[11px] font-semibold text-soviet-red tabular-nums leading-none">{{ $tabletCode }}</span>
+                                <span class="block text-[8px] text-warm-gray tabular-nums leading-none mt-0.5">{{ $tabletOccs->count() }}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-px flex-1 min-w-0">
+                                @foreach($tabletOccs as $occ)
+                                    @php
+                                        $imgPath = $occ->preferredImagePath();
+                                        $sideChar = chr(ord('a') + $occ->tabletLine->side);
+                                        $loc = $sideChar . $occ->tabletLine->line . ':' . $occ->position;
+                                        $modSymbols = collect([
+                                            'is_inverted' => 'f', 'is_mirrored' => 'b', 'is_small' => 's',
+                                            'is_enlarged' => 'V', 'is_truncated' => 't', 'is_distorted' => 'y',
+                                            'is_uncertain' => '?', 'is_nonstandard' => 'x',
+                                        ])->filter(fn($sym, $field) => $occ->$field)->values()->join('');
+                                    @endphp
+                                    <a href="{{ route('line', [$tabletCode, $sideChar, $occ->tabletLine->line]) }}"
+                                       class="group relative size-10 bg-white hover:bg-cream-dark flex items-center justify-center transition-colors
+                                              {{ $modSymbols ? 'ring-1 ring-inset ring-soviet-red/20' : '' }}"
+                                       title="{{ $rendering->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }} — {{ $tabletCode }}{{ $loc }}">
+                                        @if($imgPath)
+                                            <img src="{{ asset($imgPath) }}"
+                                                 class="size-8 object-contain group-hover:scale-110 transition-transform"
+                                                 alt="{{ $loc }}"
+                                                 loading="lazy">
+                                        @else
+                                            <span class="text-[8px] text-warm-gray tabular-nums">{{ $rendering->code }}</span>
+                                        @endif
+                                        <span class="absolute inset-x-0 -bottom-3.5 text-center text-[7px] tabular-nums text-warm-gray leading-none
+                                                     opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">{{ $loc }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endforeach
                 </div>

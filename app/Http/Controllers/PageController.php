@@ -44,7 +44,7 @@ class PageController extends Controller
             ->firstOrFail();
 
         $occurrences = TabletRendering::whereIn('rendering_id', $glyph->renderings->pluck('id'))
-            ->with(['tabletLine.tablet', 'rendering'])
+            ->with(['tabletLine.tablet', 'rendering', 'images'])
             ->orderBy('tablet_line_id')
             ->orderBy('position')
             ->get();
@@ -81,6 +81,7 @@ class PageController extends Controller
             'images' => fn ($q) => $q->where('type', 'photo')->orderBy('sort_order'),
             'lines' => fn ($q) => $q->orderBy('side')->orderBy('line'),
             'lines.tabletRenderings' => fn ($q) => $q->orderBy('position'),
+            'lines.tabletRenderings.images',
             'lines.tabletRenderings.rendering.glyph.images',
             'lines.tabletRenderings.compoundGlyph.parts' => fn ($q) => $q->orderBy('order'),
             'lines.tabletRenderings.compoundGlyph.parts.glyph.images',
@@ -112,6 +113,7 @@ class PageController extends Controller
             'images',
             'renderings' => fn ($q) => $q->orderBy('code'),
             'renderings.tabletRenderings' => fn ($q) => $q->orderBy('tablet_line_id')->orderBy('position'),
+            'renderings.tabletRenderings.images',
             'renderings.tabletRenderings.tabletLine.tablet',
         ])
             ->where('barthel_code', $code)
@@ -123,6 +125,20 @@ class PageController extends Controller
         $next = Glyph::where('barthel_code', '>', $code)->has('renderings')->orderBy('barthel_code')->first();
 
         return view('rendering', compact('glyph', 'totalOccurrences', 'prev', 'next'));
+    }
+
+    public function about()
+    {
+        $stats = [
+            'tablets' => Tablet::count(),
+            'lines' => \App\Models\TabletLine::count(),
+            'glyphs' => Glyph::count(),
+            'renderings' => \App\Models\Rendering::count(),
+            'ligatures' => CompoundGlyph::count(),
+            'occurrences' => TabletRendering::count(),
+        ];
+
+        return view('about', compact('stats'));
     }
 
     public function ligatures()
@@ -166,6 +182,7 @@ class PageController extends Controller
 
         $line = TabletLine::with([
             'tabletRenderings' => fn ($q) => $q->orderBy('position'),
+            'tabletRenderings.images',
             'tabletRenderings.rendering.glyph.images',
             'tabletRenderings.compoundGlyph.parts' => fn ($q) => $q->orderBy('order'),
             'tabletRenderings.compoundGlyph.parts.glyph.images',

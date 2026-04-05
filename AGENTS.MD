@@ -1,315 +1,291 @@
 # Rongorongo Research Platform
 
-Платформа для исследования письма ронгоронго (остров Пасхи).
-Цель — структурировать корпус глифов, визуализировать связи и создать инструменты для попытки расшифровки.
-
-## Стек
-
-- **Backend**: Laravel 12 (PHP 8.4)
-- **Admin**: Filament v5
-- **Database**: SQLite
-- **Frontend**: TBD
-- **Локализация**: EN / RU (переключатель в админке)
+Research platform for the rongorongo script (Easter Island).
+Structured glyph corpus with SVG renderings, relationship visualization, and analysis tools.
 
 ---
 
-## Структура проекта
+## Commits
+
+Format: `type: short message in english`
+
+| Prefix | Use |
+|--------|-----|
+| `feat` | New feature or functionality |
+| `fix` | Bug fix |
+| `refactor` | Code restructuring without behavior change |
+| `delete` | Removing code, files, or features |
+| `style` | CSS, formatting, whitespace |
+| `docs` | Documentation changes |
+| `chore` | Dependencies, config, tooling |
+
+Examples:
+```
+feat: add about page with attribution and corpus stats
+fix: resolve duplicate position in tablet D import
+refactor: replace state machine with ggn-based grouping
+delete: remove legacy ImportTablets command and tablets.json
+style: compact specimen sheet on glyph page
+docs: add AGENTS.md with project structure
+chore: add public/svg bind mount to docker-compose
+```
+
+---
+
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Laravel 12, PHP 8.4 |
+| Admin | Filament v5 |
+| Frontend | Blade + Tailwind CSS v4 + Vite |
+| Database | PostgreSQL 17 (Docker) / SQLite (local) |
+| Cache | Varnish 7.6 (HTTP) + Redis 7 (session/cache/queue) |
+| Web server | OpenResty (nginx) |
+| Font | Jost |
+| Localization | EN / RU |
+
+---
+
+## Running
+
+### Docker (primary)
+
+```bash
+# Start all services
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Ports:
+#   2020 — Varnish (production-like cache)
+#   2030 — OpenResty directly (no cache, for debugging)
+```
+
+### Artisan commands inside Docker
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec app php artisan <command>
+```
+
+### Local (without Docker)
+
+```bash
+composer setup        # full setup: .env, key, migrate, npm, build
+composer dev          # artisan serve + queue + pail + vite dev (concurrent)
+```
+
+---
+
+## Frontend Build
+
+Tailwind CSS v4 with JIT compilation via Vite. CSS is rebuilt on every build.
+
+```bash
+# Production build (required after adding new Tailwind classes in Blade templates)
+npx vite build
+
+# Dev server with HMR
+npm run dev
+```
+
+**Important:** In Docker, CSS is built during image build. If you add new Tailwind classes in Blade — rebuild locally (`npx vite build`), the `public/build` bind mount delivers files to the container.
+
+Theme defined in `resources/css/app.css`:
+- `--color-cream` #FAFAF5 — background
+- `--color-ink` #1A1A1A — text
+- `--color-soviet-red` #CC2936 — accent
+- `--color-deep-blue` #2B4570 — secondary
+- `--color-warm-gray` #9E9689 — tertiary
+- `--color-rule` #D4CFC3 — rules/borders
+
+Aesthetic: Soviet constructivism / editorial. No border-radius (`border-radius: 0` globally).
+
+---
+
+## Database
+
+### Schema
+
+```
+tablets                         # 26 tablets (A-Z), seeded
+├── tablet_lines                # lines (side 0-7, line, direction ltr/rtl)
+│   └── tablet_renderings       # glyph occurrences (position, 8 modifier flags)
+│       ├── → rendering         # rendering variant (code, glyph_id)
+│       │   └── → glyph         # abstract glyph (barthel_code)
+│       └── → compound_glyph   # ligature (code: "005.009")
+│           └── compound_glyph_parts  # parts (glyph_id, order)
+│
+images                          # polymorphic (imageable → any model)
+    type: 'photo'               # tablet photographs (Wikimedia)
+    type: 'rendering-svg'       # SVG occurrences (kohaumotu.org)
+```
+
+### Migrations
+
+```bash
+php artisan migrate             # inside Docker container
+```
+
+### Seeders
+
+```bash
+php artisan db:seed             # creates test user + 26 tablets (TabletSeeder)
+```
+
+`TabletSeeder` — all 26 tablets with code, name, name_en, name_ru, type, location.
+
+### Docker vs Local DB
+
+- `.env.docker` → PostgreSQL (db:5432, rongorongo/secret)
+- `.env` → SQLite (database/database.sqlite)
+- These are two **independent** databases, not synced
+- Primary working DB is PostgreSQL in Docker
+
+---
+
+## Data Import
+
+### `php artisan rongorongo:import-corpus [--force]`
+
+Parses HTML/SVG from http://kohaumotu.org/Rongorongo_new/ and populates DB + saves SVG files.
+
+**What it does:**
+1. Fetches 24 tablet pages (A-X) from `lines.php?item={CODE}&type=b`
+2. Parses h3 ids (`Ar01`, `Db06`, `Xg02`) → side + line
+3. Parses SVG: groups elements by `<text class="ggn">` position markers
+4. Creates: `TabletLine`, `Glyph`, `Rendering`, `CompoundGlyph`, `CompoundGlyphPart`, `TabletRendering`
+5. Saves SVGs: `public/svg/{Tablet}/{side}{line}-{pos}.svg` and `public/glyphs/{code}.svg`
+6. Creates `Image` records (type=`rendering-svg`) linked to `TabletRendering`
+
+**Label parsing** (e.g. `005jt`, `002Va`, `430!`):
+- 3 digits → barthel_code → `Glyph`
+- Letter from [a,c,d,j,h,e,k,i,o,g] → rendering variant
+- f=inverted, b=mirrored, s=small, V=enlarged, t=truncated, y=distorted
+- `!`/`x` = nonstandard, `?` = uncertain
+
+**Compound glyphs:** multiple paths sharing one position (no line-separator between them).
+
+**Side mapping:** r/a→0, v/b→1, c→2, d→3, e→4, f→5, g→6, h→7 (tablet X has 8 locations).
+
+**On re-run** — clears all corpus data (preserving tablets and their photos) and re-imports. `--force` overwrites SVG files.
+
+### `php artisan rongorongo:download-photos [--force]`
+
+Downloads tablet photographs from Wikimedia Commons.
+- 13 tablets, ~33 photos
+- Saves to `public/tablet-photos/{CODE}/`
+- Creates `Image` records (type=`photo`) linked to `Tablet`
+
+---
+
+## File Structure
 
 ```
 app/
+├── Console/Commands/
+│   ├── ImportCorpus.php          # corpus import from kohaumotu.org
+│   └── DownloadTabletPhotos.php  # photos from Wikimedia
+├── Http/Controllers/
+│   └── PageController.php        # all public pages
 ├── Models/
-│   ├── Tablet.php
-│   ├── Glyph.php
-│   ├── Rendering.php
-│   ├── CompoundGlyph.php
-│   ├── CompoundGlyphPart.php
-│   ├── TabletLine.php
-│   └── TabletRendering.php
-├── Filament/
-│   └── Resources/
-│       ├── TabletResource.php          (+Pages, +RelationManagers/LinesRelationManager)
-│       ├── GlyphResource.php           (+Pages, +RelationManagers/RenderingsRelationManager)
-│       ├── CompoundGlyphResource.php   (+Pages, +RelationManagers/PartsRelationManager)
-│       ├── RenderingResource.php       (+Pages)
-│       ├── TabletLineResource.php      (+Pages)
-│       ├── TabletRenderingResource.php (+Pages)
-│       └── CompoundGlyphPartResource.php (+Pages)
-├── Http/Middleware/
-│   └── SetLocale.php
-└── Providers/Filament/
-    └── AdminPanelProvider.php
+│   ├── Tablet.php                # tablet artifact
+│   ├── TabletLine.php            # line (side, line, direction)
+│   ├── TabletRendering.php       # glyph occurrence (position, modifiers)
+│   ├── Glyph.php                 # abstract glyph (barthel_code)
+│   ├── Rendering.php             # rendering variant (code = barthel + variant)
+│   ├── CompoundGlyph.php         # ligature (code = "005.009")
+│   ├── CompoundGlyphPart.php     # ligature part (glyph_id, order)
+│   └── Image.php                 # polymorphic image
+├── Filament/Resources/           # 7 admin panel resources
+└── Http/Middleware/SetLocale.php
 
-lang/
-├── en/models.php
-└── ru/models.php
+resources/views/
+├── layouts/public.blade.php      # layout (header, nav, footer)
+├── alphabet.blade.php            # glyph catalog
+├── glyph.blade.php               # glyph page + specimen sheet
+├── tablet.blade.php              # tablet (photos + chess grid)
+├── line.blade.php                # line (glyph grid)
+├── ligatures.blade.php           # ligatures
+├── rendering.blade.php           # glyph renderings + specimen sheet
+├── renderings.blade.php          # all renderings
+├── tablets.blade.php             # tablet listing
+└── lines.blade.php               # all lines
 
-database/migrations/
-├── 2024_01_01_000001_create_tablets_table.php
-├── 2024_01_01_000002_create_glyphs_table.php
-├── 2024_01_01_000003_create_renderings_table.php
-├── 2024_01_01_000004_create_compound_glyphs_table.php
-├── 2024_01_01_000005_create_compound_glyph_parts_table.php
-├── 2024_01_01_000006_create_tablet_lines_table.php
-└── 2024_01_01_000007_create_tablet_renderings_table.php
+public/
+├── glyphs/                       # representative glyph SVGs (632 files)
+├── svg/{A..X}/                   # per-occurrence SVGs (~15000 files)
+├── tablet-photos/{A..S}/         # tablet photographs
+└── build/                        # Vite output (CSS + JS)
+
+docker/
+├── php/Dockerfile                # PHP 8.4-FPM + Node 22
+├── openresty/nginx.conf          # nginx config
+└── varnish/default.vcl           # Varnish cache rules
 ```
 
 ---
 
-## Структура базы данных
+## Docker Architecture
 
-### `tablets` — таблички
+```
+[Browser] → :2020 Varnish → :80 OpenResty → :9000 PHP-FPM (app)
+                                    ↓                    ↓
+                              static files         PostgreSQL :5432
+                              (public/)             Redis :6379
+```
 
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `code` | varchar(5) | Буква по Бартелю: A, B, C... |
-| `name` | varchar(100) | Название: Mamari, Santiago Staff... |
-| `location` | varchar(200) | Где хранится сейчас |
-| `description` | text | Описание |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
+**Dev bind mounts** (docker-compose.dev.yml):
+- `app/`, `resources/`, `routes/`, `config/`, `database/`, `bootstrap/`, `tests/`, `lang/`, `artisan` — application code
+- `public/build` — Vite output
+- `public/tablet-photos`, `public/glyphs`, `public/svg` — static SVGs and photos
 
----
+**Named volumes:** `vendor_data` (composer), `storage_data`, `app_public`, `pgdata`, `redis_data`
 
-### `glyphs` — знаки (абстрактные, ~120 штук)
+**Important:** After changing Blade templates, restart the app container to clear OPcache:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml restart app
+```
 
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `barthel_code` | varchar(10) UNIQUE | Номер по Бартелю: 001, 022, 600 |
-| `description` | text | Что известно о знаке |
-| `image` | varchar(255) | Путь к изображению |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
-
----
-
-### `renderings` — начертания (конкретные варианты знака)
-
-Подварианты формы одного знака: 022a, 022c, 022d...
-Модификаторы-подварианты из нотации Бартеля: a, c, d, j, h, e, k, i, o, g
-
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `glyph_id` | bigint FK | → glyphs |
-| `code` | varchar(10) UNIQUE | Полный код: 022a, 022c... |
-| `description` | text | |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
-
----
-
-### `compound_glyphs` — составные знаки (лигатуры)
-
-Два и более знака нарисованы слитно: 001.006, 001.006.022...
-В корпусе встречаются лигатуры из 2, 3, 4 и 5 частей.
-
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `code` | varchar(30) UNIQUE | Полный код: 001.006.022 |
-| `description` | text | |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
-
-### `compound_glyph_parts` — из чего состоит составной знак
-
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `compound_glyph_id` | bigint FK | → compound_glyphs |
-| `glyph_id` | bigint FK | → glyphs |
-| `order` | tinyint unsigned | Порядок части (1, 2, 3...) |
-
-**Индексы:**
-```sql
-UNIQUE (compound_glyph_id, order)
-INDEX  (glyph_id)
+To clear Varnish cache:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml restart varnish
 ```
 
 ---
 
-### `tablet_lines` — строки табличек
+## Routes
 
-Бустрофедон: табличка читается змейкой с переворотом.
-Направление каждой строки хранится явно — вычислять нельзя, у разных табличек разная разметка.
-
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `tablet_id` | bigint FK | → tablets |
-| `side` | tinyint(1) | 0 = лицо (recto), 1 = обратная (verso) |
-| `line` | tinyint unsigned | Номер строки на стороне (1, 2, 3...) |
-| `direction` | enum('ltr','rtl') | Направление чтения |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
-
-**Индексы:**
-```sql
-UNIQUE (tablet_id, side, line)
-```
-
----
-
-### `tablet_renderings` — вхождения знаков в таблички
-
-На каждой позиции стоит либо начертание либо составной знак — одно из двух, второе NULL.
-
-| Колонка | Тип | Описание |
-|---|---|---|
-| `id` | bigint PK | |
-| `tablet_line_id` | bigint FK | → tablet_lines |
-| `rendering_id` | bigint FK nullable | → renderings |
-| `compound_glyph_id` | bigint FK nullable | → compound_glyphs |
-| `position` | smallint unsigned | Позиция в строке (1, 2, 3...) |
-| `is_inverted` | bool | Перевёрнут вертикально (f) |
-| `is_mirrored` | bool | Зеркальный (b) |
-| `is_small` | bool | Уменьшен (s) |
-| `is_enlarged` | bool | Увеличен (V) |
-| `is_truncated` | bool | Усечён (t) |
-| `is_distorted` | bool | Деформирован (y) |
-| `is_uncertain` | bool | Сомнительное чтение (?) |
-| `is_nonstandard` | bool | Нестандартная форма (x) |
-| `created_at` | timestamp | |
-| `updated_at` | timestamp | |
-
-**Индексы:**
-```sql
-UNIQUE (tablet_line_id, position)
-INDEX  (rendering_id)
-INDEX  (compound_glyph_id)
-```
-
----
-
-## Связи (Eloquent)
-
-```
-Tablet
-  └── hasMany TabletLine
-        └── hasMany TabletRendering
-              ├── belongsTo Rendering
-              │     └── belongsTo Glyph
-              └── belongsTo CompoundGlyph
-                    └── hasMany CompoundGlyphPart
-                          └── belongsTo Glyph
-
-Glyph
-  └── hasMany Rendering
-  └── hasMany CompoundGlyphPart
-```
-
-Чтение строки в порядке:
-```php
-TabletLine::where('tablet_id', $id)
-    ->where('side', 0)
-    ->where('line', 1)
-    ->first()
-    ->tabletRenderings()
-    ->orderBy('position')
-    ->with(['rendering.glyph', 'compoundGlyph.parts.glyph'])
-    ->get();
-```
-
-Все вхождения знака во всех табличках:
-```php
-Glyph::find($id)
-    ->renderings()
-    ->with('tabletRenderings.tabletLine.tablet')
-    ->get();
-```
+| URL | Name | Description |
+|-----|------|------------|
+| `/` | alphabet | Glyph catalog |
+| `/glyph/{code}` | glyph | Glyph detail + specimen sheet |
+| `/renderings` | renderings | All renderings |
+| `/renderings/{code}` | rendering | Glyph renderings + specimen sheet |
+| `/ligatures` | ligatures | Ligatures |
+| `/tablets` | tablets | Tablet listing |
+| `/tablet/{code}` | tablet | Tablet (photos + chess grid) |
+| `/lines` | lines | All lines |
+| `/line/{tablet}/{side}/{line}` | line | Line (glyph grid) |
+| `/locale/{locale}` | locale.switch | Toggle EN/RU |
+| `/admin` | — | Filament admin panel |
 
 ---
 
 ## Filament Admin
 
 **URL:** `/admin`
-**Учётка:** `admin@rongorongo.local` / `password`
+**Login:** `admin@rongorongo.local` / `password`
 
-### Ресурсы (7 шт)
-
-Все ресурсы в группе навигации «Corpus» / «Корпус»:
-
-| Ресурс | Модель | RelationManagers |
-|---|---|---|
-| TabletResource | Tablet | LinesRelationManager |
-| GlyphResource | Glyph | RenderingsRelationManager |
-| CompoundGlyphResource | CompoundGlyph | PartsRelationManager |
-| RenderingResource | Rendering | — |
-| TabletLineResource | TabletLine | — |
-| TabletRenderingResource | TabletRendering | — |
-| CompoundGlyphPartResource | CompoundGlyphPart | — |
-
-### Локализация
-
-- Переключатель EN/RU в topbar (флаг-кнопка рядом с user menu)
-- Locale хранится в сессии, применяется через `SetLocale` middleware
-- Переводы Filament UI — из коробки (`vendor/filament/*/lang/ru/`)
-- Переводы лейблов моделей и полей — `lang/ru/models.php`, `lang/en/models.php`
-- Роут переключения: `GET /locale/{locale}` → `locale.switch`
+7 resources in "Corpus" navigation group:
+TabletResource, GlyphResource, RenderingResource, CompoundGlyphResource, TabletLineResource, TabletRenderingResource, CompoundGlyphPartResource
 
 ---
 
-## Данные
+## Corpus Statistics
 
-Источник корпуса — репозиторий [rongopy](https://github.com/jgregoriods/rongopy).
-
-Файл `ga_lstm/tablets/tablets_clean.json` — оцифрованные тексты 13 табличек
-в числовых кодах Бартеля, формат:
-
-```json
-{
-  "A": {
-    "Aa1": "430-040-320-009-...",
-    "Aa2": "201-027-103-..."
-  }
-}
-```
-
-Ключ строки парсится: `Aa1` → табличка=A, сторона=a(0), строка=1.
-
-**Статистика корпуса:**
-- 13 табличек
-- ~568 уникальных кодов глифов
-- ~11 666 вхождений
-- Лигатуры: 2166 двойных, 315 тройных, 25 четверных, 4 пятерных
-
----
-
-## Решения
-
-- **Импорт** — Filament action (кнопка в админке)
-- **Модификатор `x`** — добавлен флаг `is_nonstandard` в `tablet_renderings`
-
----
-
-## Следующие шаги
-
-- [x] Создать Laravel-проект
-- [x] Написать миграции
-- [x] Создать модели с relationship
-- [x] Подключить Filament
-- [x] Настроить ресурсы Filament (все 7 таблиц)
-- [x] Локализация EN/RU с переключателем
-- [ ] Написать импорт из `tablets_clean.json` (Filament action)
-
----
-
-## Открытые вопросы
-
-- **Параллельные места** — одинаковые последовательности знаков на разных табличках. Отдельная сущность для разметки или искать запросами по факту?
-
----
-
-## Технические заметки (Filament v5 + PHP 8.4)
-
-- `form()` принимает `Filament\Schemas\Schema`, не `Filament\Forms\Form`
-- Используем `->components([...])` вместо `->schema([...])`
-- Все actions (`EditAction`, `ViewAction`, `DeleteAction`, `CreateAction`, `BulkActionGroup`, `DeleteBulkAction`) в `Filament\Actions`, НЕ `Filament\Tables\Actions`
-- Свойства с union types должны точно совпадать с родительским классом:
-  - `$navigationIcon`: `string|\BackedEnum|null`
-  - `$navigationGroup`: `string|\UnitEnum|null`
-- `Tables\Columns\*` — namespace колонок не изменился
-- После установки обязательно: `php artisan filament:assets`
-- ext-intl должен быть включён в php.ini
+- 24 tablets (A-X)
+- 338 lines
+- 632 unique glyphs
+- 822 renderings
+- 2428 ligatures
+- 11003 occurrences
+- ~15600 SVG files

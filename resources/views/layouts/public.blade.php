@@ -55,6 +55,11 @@
                           {{ request()->routeIs('tablets') || request()->routeIs('tablet') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
                     {{ __('front.nav.tablets') }}
                 </a>
+                <a href="{{ route('about') }}"
+                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
+                          {{ request()->routeIs('about') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
+                    {{ __('front.about.title') }}
+                </a>
             </nav>
         </header>
 
@@ -75,6 +80,9 @@
                     <a href="mailto:d.shaludnyov@gmail.com?subject=RONGO"
                        class="text-ink hover:text-soviet-red transition-colors font-medium">d.shaludnyov@gmail.com</a>.
                     {{ __('front.colophon.subject') }}
+                </p>
+                <p class="text-[11px] leading-relaxed text-warm-gray/70 mt-2 max-w-xl">
+                    {{ __('front.colophon.attribution') }}
                 </p>
             </div>
 

@@ -21,9 +21,14 @@ class TabletLine extends Model
         return $this->hasMany(TabletRendering::class)->orderBy('position');
     }
 
+    private const SIDE_LABELS = [
+        0 => 'recto',
+        1 => 'verso',
+    ];
+
     public function getSideLabelAttribute(): string
     {
-        return $this->side === 0 ? 'recto' : 'verso';
+        return self::SIDE_LABELS[$this->side] ?? 'side ' . chr(ord('a') + $this->side);
     }
 
     public function images(): MorphMany

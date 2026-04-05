@@ -83,7 +83,7 @@
                 {{-- Glyph image --}}
                 <div class="flex items-center justify-center w-full h-24 px-1">
                     @if($tr->rendering_id && $tr->rendering)
-                        @php $imgPath = $tr->rendering->glyph->preferredImagePath(); @endphp
+                        @php $imgPath = $tr->preferredImagePath(); @endphp
                         <a href="{{ route('glyph', $tr->rendering->glyph->barthel_code) }}"
                            class="flex items-center justify-center w-full h-full {{ $modClasses }}"
                            title="{{ $tr->rendering->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }}">
@@ -100,10 +100,11 @@
                         </a>
 
                     @elseif($isCompound)
+                        @php $compoundImages = $tr->images->sortBy('sort_order')->values(); @endphp
                         <div class="flex items-center justify-center gap-px w-full h-full {{ $modClasses }}"
                              title="{{ $tr->compoundGlyph->code }}{{ $modSymbols ? ' ['.$modSymbols.']' : '' }}">
-                            @foreach($tr->compoundGlyph->parts as $part)
-                                @php $imgPath = $part->glyph->preferredImagePath(); @endphp
+                            @foreach($tr->compoundGlyph->parts as $pi => $part)
+                                @php $imgPath = $compoundImages[$pi]->path ?? $part->glyph->preferredImagePath(); @endphp
                                 <a href="{{ route('glyph', $part->glyph->barthel_code) }}"
                                    class="inline-block"
                                    title="{{ $part->glyph->barthel_code }}">
