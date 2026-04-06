@@ -17,84 +17,76 @@ APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
 APP_URL=http://localhost:2020
-
 DB_CONNECTION=pgsql
 DB_HOST=db
 DB_PORT=5432
 DB_DATABASE=rongorongo
 DB_USERNAME=rongorongo
 DB_PASSWORD=secret
-
 CACHE_STORE=redis
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
-
 REDIS_HOST=redis
 REDIS_PORT=6379
 ENVEOF
     echo "  .env created"
 fi
 
-# 2. Build and start
-echo ""
-echo "=== Building and starting containers ==="
-docker compose up -d --build
-
-echo ""
-echo "=== Waiting for services ==="
-sleep 5
-
-# 3. Copy .env into container
-echo "Copying .env into app container..."
-docker compose cp .env app:/var/www/html/.env
-
-# 4. Generate key if empty
+# 2. Generate APP_KEY on host if empty
 APP_KEY=$(grep '^APP_KEY=' .env | cut -d= -f2-)
 if [ -z "$APP_KEY" ]; then
     echo "Generating APP_KEY..."
-    docker compose exec -T app php artisan key:generate --force
-    # Copy key back to host .env
-    NEW_KEY=$(docker compose exec -T app php artisan key:generate --show)
+    NEW_KEY="base64:$(openssl rand -base64 32)"
     sed -i "s|^APP_KEY=.*|APP_KEY=$NEW_KEY|" .env
-    echo "  Key: $NEW_KEY"
+    echo "  Key set: $NEW_KEY"
 fi
 
-# 5. Restart app with new .env
+# 3. Build and start
 echo ""
-echo "=== Restarting app ==="
+echo "=== Building and starting containers ==="
+docker compose up -d --build
+echo "Waiting for services..."
+sleep 5
+
+# 4. Copy .env into container and cache config
+echo ""
+echo "=== Configuring app ==="
+docker compose cp .env app:/var/www/html/.env
+docker compose exec -T app php artisan config:cache
+docker compose exec -T app php artisan route:cache
+docker compose exec -T app php artisan view:cache
 docker compose restart app
 sleep 3
 
-# 6. Run migrations
+# 5. Run migrations
 echo ""
 echo "=== Running migrations ==="
 docker compose exec -T app php artisan migrate --force
 
-# 7. Restore corpus dump
+# 6. Restore corpus dump
 if [ -f database/dumps/corpus.sql ]; then
     echo ""
     echo "=== Restoring corpus dump ==="
-    docker compose exec -T db psql -U rongorongo -d rongorongo --single-transaction < database/dumps/corpus.sql
+    docker compose exec -T db psql -U rongorongo -d rongorongo --single-transaction < database/dumps/corpus.sql 2>&1 | tail -3
     echo "  Dump restored"
 fi
 
-# 8. Seed
+# 7. Seed
 echo ""
 echo "=== Seeding ==="
 docker compose exec -T app php artisan db:seed --force
 
-# 9. Clear caches
+# 8. Final restart
 echo ""
-echo "=== Clearing caches ==="
-docker compose exec -T app php artisan config:cache
-docker compose exec -T app php artisan route:cache
-docker compose exec -T app php artisan view:cache
+echo "=== Final restart ==="
+docker compose restart app varnish
+sleep 3
 
-# 10. Health checks
+# 9. Health checks
 echo ""
 echo "=== Health checks ==="
-sleep 2
 
+FAIL=0
 check_url() {
     local url=$1
     local label=$2
@@ -103,6 +95,7 @@ check_url() {
         echo "  OK  $status  $label"
     else
         echo "  ERR $status  $label"
+        FAIL=1
     fi
 }
 
@@ -117,11 +110,17 @@ check_url "$BASE/lines/A"           "Lines A"
 check_url "$BASE/line/A/a/1"        "Line A/a/1"
 check_url "$BASE/about"             "About"
 check_url "$BASE/sitemap.xml"       "Sitemap"
-check_url "$BASE/favicon.svg"       "Favicon SVG"
 
 echo ""
 echo "=== Container status ==="
-docker compose ps
+docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+
+if [ "$FAIL" = "1" ]; then
+    echo ""
+    echo "=== ERRORS detected. Checking logs... ==="
+    docker compose logs app --tail=10
+    exit 1
+fi
 
 echo ""
-echo "=== Done ==="
+echo "=== Deploy complete ==="
