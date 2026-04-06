@@ -31,6 +31,9 @@ return [
         'count_occurrences' => 'occurrences',
         'count_ligatures' => 'ligatures',
         'all_occurrences' => 'all occurrences',
+        'meaning' => 'Meaning',
+        'meaning_confirmed' => 'Confirmed',
+        'meaning_proposed' => 'Proposed',
     ],
     'tablets' => [
         'title' => 'Tablets',

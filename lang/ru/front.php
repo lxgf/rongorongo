@@ -31,6 +31,9 @@ return [
         'count_occurrences' => 'вхождений',
         'count_ligatures' => 'лигатур',
         'all_occurrences' => 'все вхождения',
+        'meaning' => 'Значение',
+        'meaning_confirmed' => 'Подтверждено',
+        'meaning_proposed' => 'Гипотеза',
     ],
     'tablets' => [
         'title' => 'Таблички',

@@ -58,12 +58,12 @@
         <section class="mb-10">
             <div class="flex items-center gap-4 mb-4">
                 <h2 class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap">
-                    Meaning
+                    {{ __('front.glyph.meaning') }}
                 </h2>
                 @if($glyph->meaning_status === 'confirmed')
-                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-green-600 text-white">Confirmed</span>
+                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-green-600 text-white">{{ __('front.glyph.meaning_confirmed') }}</span>
                 @else
-                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-amber-500 text-white">Proposed</span>
+                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-amber-500 text-white">{{ __('front.glyph.meaning_proposed') }}</span>
                 @endif
                 <div class="flex-1 border-t border-ink"></div>
             </div>
