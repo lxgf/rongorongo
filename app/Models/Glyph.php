@@ -8,7 +8,25 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Glyph extends Model
 {
-    protected $fillable = ['barthel_code', 'description', 'meaning', 'meaning_status', 'meaning_source'];
+    protected $fillable = ['barthel_code', 'description', 'meaning', 'meaning_status', 'meaning_source', 'meaning_ru', 'meaning_source_ru'];
+
+    public function localizedMeaning(): ?string
+    {
+        if (app()->getLocale() === 'ru' && $this->meaning_ru) {
+            return $this->meaning_ru;
+        }
+
+        return $this->meaning;
+    }
+
+    public function localizedMeaningSource(): ?string
+    {
+        if (app()->getLocale() === 'ru' && $this->meaning_source_ru) {
+            return $this->meaning_source_ru;
+        }
+
+        return $this->meaning_source;
+    }
 
     public function renderings(): HasMany
     {

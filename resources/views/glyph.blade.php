@@ -68,9 +68,9 @@
                 <div class="flex-1 border-t border-ink"></div>
             </div>
             <div class="border-l-2 {{ $glyph->meaning_status === 'confirmed' ? 'border-green-600' : 'border-amber-500' }} pl-4 max-w-2xl">
-                <p class="text-base font-semibold text-ink">{{ $glyph->meaning }}</p>
+                <p class="text-base font-semibold text-ink">{{ $glyph->localizedMeaning() }}</p>
                 @if($glyph->meaning_source)
-                    <p class="text-sm text-warm-gray mt-1">{{ $glyph->meaning_source }}</p>
+                    <p class="text-sm text-warm-gray mt-1">{{ $glyph->localizedMeaningSource() }}</p>
                 @endif
             </div>
         </section>
