@@ -28,7 +28,9 @@ sub vcl_recv {
     } else {
         set req.http.X-Forwarded-Port = "80";
     }
-    set req.http.X-Forwarded-Proto = "http";
+    if (!req.http.X-Forwarded-Proto) {
+        set req.http.X-Forwarded-Proto = "http";
+    }
 
     # Pass non-GET/HEAD requests
     if (req.method != "GET" && req.method != "HEAD") {
