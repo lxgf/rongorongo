@@ -56,10 +56,18 @@
     {{-- Glyph grid --}}
     <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 mb-8">
         @foreach($glyphs as $glyph)
-            @php $imgPath = $glyph->preferredImagePath(); @endphp
+            @php
+                $imgPath = $glyph->preferredImagePath();
+                $borderClass = match($glyph->meaning_status) {
+                    'confirmed' => 'border-2 border-green-600',
+                    'proposed' => 'border-2 border-amber-500',
+                    default => 'border border-rule',
+                };
+            @endphp
             <a href="{{ route('glyph', $glyph->barthel_code) }}"
-               class="glyph-card group block border border-rule hover:border-soviet-red transition-colors"
-               data-code="{{ $glyph->barthel_code }}">
+               class="glyph-card group block {{ $borderClass }} hover:border-soviet-red transition-colors"
+               data-code="{{ $glyph->barthel_code }}"
+               @if($glyph->meaning) title="{{ $glyph->meaning }}" @endif>
                 <div class="aspect-square bg-white flex items-center justify-center p-2 overflow-hidden">
                     @if($imgPath)
                         <img src="{{ asset($imgPath) }}"

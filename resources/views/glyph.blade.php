@@ -53,6 +53,29 @@
         <span class="tabular-nums">{{ $ligatures->count() }} {{ __('front.glyph.count_ligatures') }}</span>
     </div>
 
+    {{-- Meaning --}}
+    @if($glyph->meaning)
+        <section class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <h2 class="text-[11px] font-medium tracking-[0.15em] uppercase whitespace-nowrap">
+                    Meaning
+                </h2>
+                @if($glyph->meaning_status === 'confirmed')
+                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-green-600 text-white">Confirmed</span>
+                @else
+                    <span class="text-[9px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-amber-500 text-white">Proposed</span>
+                @endif
+                <div class="flex-1 border-t border-ink"></div>
+            </div>
+            <div class="border-l-2 {{ $glyph->meaning_status === 'confirmed' ? 'border-green-600' : 'border-amber-500' }} pl-4 max-w-2xl">
+                <p class="text-base font-semibold text-ink">{{ $glyph->meaning }}</p>
+                @if($glyph->meaning_source)
+                    <p class="text-sm text-warm-gray mt-1">{{ $glyph->meaning_source }}</p>
+                @endif
+            </div>
+        </section>
+    @endif
+
     {{-- Renderings --}}
     @if($glyph->renderings->isNotEmpty())
         <section class="mb-10">

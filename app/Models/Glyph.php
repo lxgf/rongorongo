@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Glyph extends Model
 {
-    protected $fillable = ['barthel_code', 'description'];
+    protected $fillable = ['barthel_code', 'description', 'meaning', 'meaning_status', 'meaning_source'];
 
     public function renderings(): HasMany
     {

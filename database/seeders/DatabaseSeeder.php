@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(TabletSeeder::class);
+        $this->call(GlyphMeaningSeeder::class);
     }
 }
