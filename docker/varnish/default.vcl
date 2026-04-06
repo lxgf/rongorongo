@@ -22,11 +22,13 @@ sub vcl_recv {
         return (pass);
     }
 
-    # Forward original client info to backend
-    if (req.http.Host ~ ":(\d+)$") {
-        set req.http.X-Forwarded-Port = regsub(req.http.Host, "^.*:(\d+)$", "\1");
-    } else {
-        set req.http.X-Forwarded-Port = "80";
+    # Forward original client info to backend (preserve upstream headers)
+    if (!req.http.X-Forwarded-Port) {
+        if (req.http.Host ~ ":(\d+)$") {
+            set req.http.X-Forwarded-Port = regsub(req.http.Host, "^.*:(\d+)$", "\1");
+        } else {
+            set req.http.X-Forwarded-Port = "80";
+        }
     }
     if (!req.http.X-Forwarded-Proto) {
         set req.http.X-Forwarded-Proto = "http";
