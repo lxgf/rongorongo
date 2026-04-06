@@ -10,10 +10,17 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = session('locale', config('app.locale'));
+        $host = $request->getHost();
 
-        if (array_key_exists($locale, config('app.supported_locales', []))) {
-            app()->setLocale($locale);
+        // ru.rongorongo.top → Russian
+        if (str_starts_with($host, 'ru.')) {
+            app()->setLocale('ru');
+        } else {
+            // Fallback to session for local dev, default to EN
+            $locale = session('locale', config('app.locale'));
+            if (array_key_exists($locale, config('app.supported_locales', []))) {
+                app()->setLocale($locale);
+            }
         }
 
         return $next($request);

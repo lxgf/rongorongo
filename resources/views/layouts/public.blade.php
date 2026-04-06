@@ -15,6 +15,9 @@
     @if(trim($__env->yieldContent('og_image')))
     <meta property="og:image" content="@yield('og_image')">
     @endif
+    <link rel="alternate" hreflang="en" href="https://rongorongo.top{{ request()->getPathInfo() }}">
+    <link rel="alternate" hreflang="ru" href="https://ru.rongorongo.top{{ request()->getPathInfo() }}">
+    <link rel="alternate" hreflang="x-default" href="https://rongorongo.top{{ request()->getPathInfo() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -30,13 +33,16 @@
                     {{ __('front.site_title') }}
                 </a>
                 <div class="flex gap-2 text-xs tracking-wider">
-                    @foreach (config('app.supported_locales') as $code => $meta)
-                        @unless ($loop->first)
-                            <span class="text-rule">|</span>
-                        @endunless
-                        <a href="{{ route('locale.switch', $code) }}"
-                           class="{{ app()->getLocale() === $code ? 'font-semibold text-ink' : 'text-warm-gray hover:text-ink' }} transition-colors">{{ strtoupper($code) }}</a>
-                    @endforeach
+                    @php
+                        $currentPath = request()->getPathInfo();
+                        $enUrl = 'https://rongorongo.top' . $currentPath;
+                        $ruUrl = 'https://ru.rongorongo.top' . $currentPath;
+                    @endphp
+                    <a href="{{ $enUrl }}"
+                       class="{{ app()->getLocale() === 'en' ? 'font-semibold text-ink' : 'text-warm-gray hover:text-ink' }} transition-colors">EN</a>
+                    <span class="text-rule">|</span>
+                    <a href="{{ $ruUrl }}"
+                       class="{{ app()->getLocale() === 'ru' ? 'font-semibold text-ink' : 'text-warm-gray hover:text-ink' }} transition-colors">RU</a>
                 </div>
             </div>
             <div class="border-t border-ink mt-3 mb-3"></div>
