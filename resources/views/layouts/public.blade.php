@@ -40,37 +40,24 @@
                 </div>
             </div>
             <div class="border-t border-ink mt-3 mb-3"></div>
-            <nav class="flex gap-8">
-                <a href="{{ route('alphabet') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('alphabet') || request()->routeIs('glyph') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.alphabet') }}
-                </a>
-                <a href="{{ route('ligatures') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('ligatures') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.ligatures') }}
-                </a>
-                <a href="{{ route('renderings') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('renderings') || request()->routeIs('rendering') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.renderings') }}
-                </a>
-                <a href="{{ route('lines') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('lines') || request()->routeIs('line') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.lines') }}
-                </a>
-                <a href="{{ route('tablets') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('tablets') || request()->routeIs('tablet') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.nav.tablets') }}
-                </a>
-                <a href="{{ route('about') }}"
-                   class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors
-                          {{ request()->routeIs('about') ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
-                    {{ __('front.about.title') }}
-                </a>
+            <nav class="flex gap-4 sm:gap-8 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
+                @php
+                    $navItems = [
+                        ['route' => 'alphabet', 'label' => __('front.nav.alphabet'), 'active' => request()->routeIs('alphabet') || request()->routeIs('glyph')],
+                        ['route' => 'ligatures', 'label' => __('front.nav.ligatures'), 'active' => request()->routeIs('ligatures')],
+                        ['route' => 'renderings', 'label' => __('front.nav.renderings'), 'active' => request()->routeIs('renderings') || request()->routeIs('rendering')],
+                        ['route' => 'lines', 'label' => __('front.nav.lines'), 'active' => request()->routeIs('lines') || request()->routeIs('line')],
+                        ['route' => 'tablets', 'label' => __('front.nav.tablets'), 'active' => request()->routeIs('tablets') || request()->routeIs('tablet')],
+                        ['route' => 'about', 'label' => __('front.about.title'), 'active' => request()->routeIs('about')],
+                    ];
+                @endphp
+                @foreach($navItems as $item)
+                    <a href="{{ route($item['route']) }}"
+                       class="text-[11px] tracking-[0.15em] uppercase font-medium transition-colors whitespace-nowrap shrink-0
+                              {{ $item['active'] ? 'text-soviet-red' : 'text-ink hover:text-soviet-red' }}">
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
             </nav>
         </header>
 
