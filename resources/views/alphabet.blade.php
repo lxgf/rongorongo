@@ -68,11 +68,11 @@
                class="glyph-card group block {{ $borderClass }} hover:border-soviet-red transition-colors"
                data-code="{{ $glyph->barthel_code }}"
                @if($glyph->meaning) title="{{ $glyph->meaning }}" @endif>
-                <div class="aspect-square bg-white flex items-center justify-center p-2 overflow-hidden">
+                <div class="aspect-square bg-white flex items-center justify-center p-1.5 overflow-hidden">
                     @if($imgPath)
                         <img src="{{ asset($imgPath) }}"
                              alt="{{ $glyph->barthel_code }}"
-                             class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-200"
+                             class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200"
                              loading="lazy">
                     @else
                         <span class="text-lg font-light text-warm-gray">{{ $glyph->barthel_code }}</span>

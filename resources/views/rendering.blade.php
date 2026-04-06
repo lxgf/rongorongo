@@ -62,7 +62,7 @@
                     @if($imgPath = $glyph->preferredImagePath())
                         <img src="{{ asset($imgPath) }}"
                              alt="{{ $rendering->code }}"
-                             class="max-w-full max-h-full object-contain p-1"
+                             class="w-full h-full object-contain"
                              loading="lazy">
                     @else
                         <span class="text-xs font-light text-warm-gray">{{ $glyph->barthel_code }}</span>

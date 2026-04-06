@@ -114,7 +114,7 @@
                             @if($imgPath)
                                 <img src="{{ asset($imgPath) }}"
                                      alt="{{ $glyph->barthel_code }}"
-                                     class="max-w-full max-h-full object-contain p-1 group-hover:scale-110 transition-transform duration-200"
+                                     class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200"
                                      loading="lazy">
                             @else
                                 <span class="text-xs font-light text-warm-gray">{{ $glyph->barthel_code }}</span>
