@@ -6,11 +6,14 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <title>@yield('title', __('front.site_title'))</title>
-    <meta name="description" content="@yield('meta_description', 'Rongorongo — open-source research platform for the undeciphered writing system of Rapa Nui (Easter Island). Glyph catalog, SVG renderings, tablets, and corpus analysis.')">
+    @php $defaultDesc = app()->getLocale() === 'ru'
+        ? 'Ронгоронго — исследовательская платформа нерасшифрованной письменности Рапа-Нуи (острова Пасхи). Каталог глифов, SVG-начертания, таблички и анализ корпуса.'
+        : 'Rongorongo — open-source research platform for the undeciphered writing system of Rapa Nui (Easter Island). Glyph catalog, SVG renderings, tablets, and corpus analysis.'; @endphp
+    <meta name="description" content="@yield('meta_description', $defaultDesc)">
     <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:title" content="@yield('og_title', $__env->yieldContent('title', __('front.site_title')))">
-    <meta property="og:description" content="@yield('og_description', $__env->yieldContent('meta_description', 'Rongorongo — open-source research platform for the undeciphered writing system of Rapa Nui (Easter Island). Glyph catalog, SVG renderings, tablets, and corpus analysis.'))">
+    <meta property="og:description" content="@yield('og_description', $__env->yieldContent('meta_description', $defaultDesc))">
     <meta property="og:url" content="@yield('canonical', url()->current())">
     @if(trim($__env->yieldContent('og_image')))
     <meta property="og:image" content="@yield('og_image')">

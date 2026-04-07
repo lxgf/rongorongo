@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Glyph ' . $glyph->barthel_code . ' Renderings — Script Variants')
-@section('meta_description', 'All graphic renderings of Rongorongo glyph ' . $glyph->barthel_code . '. ' . $glyph->renderings->count() . ' variants with ' . $totalOccurrences . ' occurrences across Easter Island tablets. SVG specimen sheet.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Начертания глифа ' . $glyph->barthel_code . ' — Ронгоронго'
+    : 'Rongorongo Glyph ' . $glyph->barthel_code . ' Renderings — Script Variants')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Все графические начертания глифа ронгоронго ' . $glyph->barthel_code . '. ' . $glyph->renderings->count() . ' вариантов, ' . $totalOccurrences . ' вхождений на табличках острова Пасхи.'
+    : 'All graphic renderings of Rongorongo glyph ' . $glyph->barthel_code . '. ' . $glyph->renderings->count() . ' variants with ' . $totalOccurrences . ' occurrences across Easter Island tablets. SVG specimen sheet.')
 @section('canonical', route('rendering', $glyph->barthel_code))
 @section('og_type', 'article')
 @section('og_image', $glyph->preferredImagePath() ? asset($glyph->preferredImagePath()) : '')

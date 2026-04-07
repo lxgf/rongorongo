@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Glyph ' . $glyph->barthel_code . ' — Easter Island Script Sign')
-@section('meta_description', 'Rongorongo glyph ' . $glyph->barthel_code . ' (Barthel code) from the Easter Island undeciphered script. ' . $glyph->renderings->count() . ' graphic variants, ' . $occurrences->count() . ' occurrences across Rapa Nui tablets.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Глиф ронгоронго ' . $glyph->barthel_code . ' — Знак письменности острова Пасхи'
+    : 'Rongorongo Glyph ' . $glyph->barthel_code . ' — Easter Island Script Sign')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Глиф ронгоронго ' . $glyph->barthel_code . ' (код Бартеля). ' . $glyph->renderings->count() . ' графических вариантов, ' . $occurrences->count() . ' вхождений на табличках Рапа-Нуи.'
+    : 'Rongorongo glyph ' . $glyph->barthel_code . ' (Barthel code) from the Easter Island undeciphered script. ' . $glyph->renderings->count() . ' graphic variants, ' . $occurrences->count() . ' occurrences across Rapa Nui tablets.')
 @section('canonical', route('glyph', $glyph->barthel_code))
 @section('og_type', 'article')
 @section('og_image', $glyph->preferredImagePath() ? asset($glyph->preferredImagePath()) : '')

@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Renderings ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Glyph Variants')
-@section('meta_description', 'Graphic variants of Rongorongo glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the Easter Island script with ' . $totalRenderings . ' rendering variants cataloged by Barthel.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Начертания ронгоронго ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Варианты глифов'
+    : 'Rongorongo Renderings ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Glyph Variants')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Графические варианты глифов ронгоронго ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' знаков, ' . $totalRenderings . ' начертаний по каталогу Бартеля.'
+    : 'Graphic variants of Rongorongo glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the Easter Island script with ' . $totalRenderings . ' rendering variants cataloged by Barthel.')
 @section('canonical', $pagination['currentIndex'] === 0 ? route('renderings') : route('renderings', ['page' => $pagination['currentIndex'] + 1]))
 
 @section('content')

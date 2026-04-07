@@ -1,7 +1,12 @@
 @extends('layouts.public')
 
-@section('title', 'Tablet ' . $tablet->code . ' ' . $tablet->name . ' — Rongorongo Easter Island Artifact')
-@section('meta_description', $tablet->name . ' (Tablet ' . $tablet->code . ') — Rongorongo inscription from Rapa Nui. ' . $tablet->lines->count() . ' lines, ' . $tablet->lines->sum(fn($l) => $l->tabletRenderings->count()) . ' glyphs in boustrophedon.' . ($tablet->location ? ' ' . $tablet->location . '.' : ''))
+@php $tabletName = app()->getLocale() === 'ru' && $tablet->name_ru ? $tablet->name_ru : $tablet->name; @endphp
+@section('title', app()->getLocale() === 'ru'
+    ? 'Табличка ' . $tablet->code . ' ' . $tabletName . ' — Ронгоронго'
+    : 'Tablet ' . $tablet->code . ' ' . $tablet->name . ' — Rongorongo Easter Island Artifact')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? $tabletName . ' (табличка ' . $tablet->code . ') — надпись ронгоронго с Рапа-Нуи. ' . $tablet->lines->count() . ' строк, ' . $tablet->lines->sum(fn($l) => $l->tabletRenderings->count()) . ' глифов.' . ($tablet->location ? ' ' . $tablet->location . '.' : '')
+    : $tablet->name . ' (Tablet ' . $tablet->code . ') — Rongorongo inscription from Rapa Nui. ' . $tablet->lines->count() . ' lines, ' . $tablet->lines->sum(fn($l) => $l->tabletRenderings->count()) . ' glyphs in boustrophedon.' . ($tablet->location ? ' ' . $tablet->location . '.' : ''))
 @section('canonical', route('tablet', $tablet->code))
 @section('og_type', 'article')
 @section('og_image', $tablet->images->count() ? asset($tablet->images->first()->path) : '')

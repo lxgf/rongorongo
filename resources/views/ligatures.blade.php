@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Ligatures' . ($pagination['currentPage'] > 1 ? ' — Page ' . $pagination['currentPage'] : '') . ' — Compound Glyphs')
-@section('meta_description', 'Rongorongo compound glyphs (ligatures) from the Easter Island script. ' . $pagination['total'] . ' fused sign combinations. Page ' . $pagination['currentPage'] . ' of ' . $pagination['totalPages'] . '.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Лигатуры ронгоронго' . ($pagination['currentPage'] > 1 ? ' — Стр. ' . $pagination['currentPage'] : '') . ' — Составные глифы'
+    : 'Rongorongo Ligatures' . ($pagination['currentPage'] > 1 ? ' — Page ' . $pagination['currentPage'] : '') . ' — Compound Glyphs')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Составные глифы (лигатуры) ронгоронго. ' . $pagination['total'] . ' комбинаций. Страница ' . $pagination['currentPage'] . ' из ' . $pagination['totalPages'] . '.'
+    : 'Rongorongo compound glyphs (ligatures) from the Easter Island script. ' . $pagination['total'] . ' fused sign combinations. Page ' . $pagination['currentPage'] . ' of ' . $pagination['totalPages'] . '.')
 @section('canonical', $pagination['currentPage'] === 1 ? route('ligatures') : route('ligatures', ['page' => $pagination['currentPage']]))
 
 @section('content')

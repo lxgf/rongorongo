@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', $selectedTablet ? 'Tablet ' . $selectedTablet->code . ' Lines — Rongorongo Script' : 'Rongorongo Lines — Browse Easter Island Tablets')
-@section('meta_description', $selectedTablet ? 'Lines of Rongorongo tablet ' . $selectedTablet->code . ' (' . $selectedTablet->name . '). ' . $sides->flatten()->count() . ' lines written in reverse boustrophedon.' : 'Browse lines of Rongorongo tablets from Rapa Nui. Reverse boustrophedon writing system.')
+@section('title', app()->getLocale() === 'ru'
+    ? ($selectedTablet ? 'Строки таблички ' . $selectedTablet->code . ' — Ронгоронго' : 'Строки ронгоронго — Таблички острова Пасхи')
+    : ($selectedTablet ? 'Tablet ' . $selectedTablet->code . ' Lines — Rongorongo Script' : 'Rongorongo Lines — Browse Easter Island Tablets'))
+@section('meta_description', app()->getLocale() === 'ru'
+    ? ($selectedTablet ? 'Строки таблички ронгоронго ' . $selectedTablet->code . '. ' . $sides->flatten()->count() . ' строк обратным бустрофедоном.' : 'Строки табличек ронгоронго с острова Пасхи (Рапа-Нуи).')
+    : ($selectedTablet ? 'Lines of Rongorongo tablet ' . $selectedTablet->code . ' (' . $selectedTablet->name . '). ' . $sides->flatten()->count() . ' lines written in reverse boustrophedon.' : 'Browse lines of Rongorongo tablets from Rapa Nui. Reverse boustrophedon writing system.'))
 @section('canonical', $selectedTablet ? route('lines', ['tablet' => $selectedTablet->code]) : route('lines'))
 
 @section('content')

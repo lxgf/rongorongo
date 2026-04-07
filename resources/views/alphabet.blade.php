@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Easter Island Script Catalog')
-@section('meta_description', 'Rongorongo script glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the undeciphered Easter Island writing system with SVG renderings. Barthel catalog.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Глифы ронгоронго ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Каталог письменности острова Пасхи'
+    : 'Rongorongo Glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . ' — Easter Island Script Catalog')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Глифы ронгоронго ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' знаков нерасшифрованной письменности острова Пасхи с SVG-начертаниями. Каталог Бартеля.'
+    : 'Rongorongo script glyphs ' . $pagination['rangeStart'] . '–' . $pagination['rangeEnd'] . '. ' . $glyphs->count() . ' signs from the undeciphered Easter Island writing system with SVG renderings. Barthel catalog.')
 @section('canonical', $pagination['currentIndex'] === 0 ? route('alphabet') : route('alphabet', ['page' => $pagination['currentIndex'] + 1]))
 
 @section('content')

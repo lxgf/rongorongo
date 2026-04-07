@@ -1,8 +1,15 @@
 @extends('layouts.public')
 
-@php $sideLabel = $line->side === 0 ? 'recto' : 'verso'; @endphp
-@section('title', 'Tablet ' . $tablet->code . ' ' . $sideLabel . ' line ' . $line->line . ' — Rongorongo Script')
-@section('meta_description', 'Rongorongo tablet ' . $tablet->code . ' (' . $tablet->name . '), ' . $sideLabel . ' line ' . $line->line . '. ' . $line->tabletRenderings->count() . ' glyphs with individual SVG renderings from the Easter Island writing system.')
+@php
+    $sideLabel = $line->side === 0 ? 'recto' : 'verso';
+    $sideLabelRu = $line->side === 0 ? 'лицевая' : 'оборотная';
+@endphp
+@section('title', app()->getLocale() === 'ru'
+    ? 'Табличка ' . $tablet->code . ' ' . $sideLabelRu . ' строка ' . $line->line . ' — Ронгоронго'
+    : 'Tablet ' . $tablet->code . ' ' . $sideLabel . ' line ' . $line->line . ' — Rongorongo Script')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Табличка ронгоронго ' . $tablet->code . ', ' . $sideLabelRu . ' строка ' . $line->line . '. ' . $line->tabletRenderings->count() . ' глифов с индивидуальными SVG-начертаниями.'
+    : 'Rongorongo tablet ' . $tablet->code . ' (' . $tablet->name . '), ' . $sideLabel . ' line ' . $line->line . '. ' . $line->tabletRenderings->count() . ' glyphs with individual SVG renderings from the Easter Island writing system.')
 @section('canonical', route('line', [$tablet->code, chr(ord('a') + $line->side), $line->line]))
 @section('og_type', 'article')
 

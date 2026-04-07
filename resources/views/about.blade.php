@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'About — Rongorongo Research Platform')
-@section('meta_description', 'Open-source research platform for the Rongorongo script — the undeciphered writing system of Rapa Nui (Easter Island). Corpus of ' . $stats['glyphs'] . ' glyphs, ' . $stats['occurrences'] . ' occurrences, SVG renderings.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'О проекте — Исследовательская платформа Ронгоронго'
+    : 'About — Rongorongo Research Platform')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Исследовательская платформа письменности ронгоронго — нерасшифрованной системы письма Рапа-Нуи (острова Пасхи). Корпус из ' . $stats['glyphs'] . ' глифов, ' . $stats['occurrences'] . ' вхождений, SVG-начертания.'
+    : 'Open-source research platform for the Rongorongo script — the undeciphered writing system of Rapa Nui (Easter Island). Corpus of ' . $stats['glyphs'] . ' glyphs, ' . $stats['occurrences'] . ' occurrences, SVG renderings.')
 @section('canonical', route('about'))
 
 @section('content')

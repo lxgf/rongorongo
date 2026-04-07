@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Rongorongo Tablets — Easter Island Inscribed Artifacts')
-@section('meta_description', 'Complete list of ' . $tablets->count() . ' Rongorongo tablets and inscribed artifacts from Rapa Nui (Easter Island). Locations, photographs, and glyph inventories for each artifact.')
+@section('title', app()->getLocale() === 'ru'
+    ? 'Таблички ронгоронго — Артефакты острова Пасхи'
+    : 'Rongorongo Tablets — Easter Island Inscribed Artifacts')
+@section('meta_description', app()->getLocale() === 'ru'
+    ? 'Полный список из ' . $tablets->count() . ' табличек ронгоронго с острова Пасхи (Рапа-Нуи). Местонахождение, фотографии и инвентарь глифов.'
+    : 'Complete list of ' . $tablets->count() . ' Rongorongo tablets and inscribed artifacts from Rapa Nui (Easter Island). Locations, photographs, and glyph inventories for each artifact.')
 @section('canonical', route('tablets'))
 
 @section('content')
