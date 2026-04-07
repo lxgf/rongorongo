@@ -1,59 +1,73 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Rongorongo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Open-source research platform for the undeciphered writing system of Rapa Nui (Easter Island).
 
-## About Laravel
+**[rongorongo.top](https://rongorongo.top)** | **[ru.rongorongo.top](https://ru.rongorongo.top)**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## What is this?
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Rongorongo is a system of glyphs discovered in the 19th century on Easter Island. Fewer than two dozen inscribed wooden artifacts survive, scattered across museums worldwide. The script remains undeciphered.
 
-## Learning Laravel
+This platform structures the corpus of ~11,000 glyph occurrences across 24 tablets, with individual SVG renderings for each occurrence, parsed from [kohaumotu.org](http://kohaumotu.org).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **632 glyphs** with Barthel catalog codes (001–799)
+- **822 rendering variants** — graphic forms of each glyph
+- **2,428 ligatures** — compound signs fused from multiple glyphs
+- **11,003 occurrences** mapped to exact positions on tablet lines
+- **~15,600 SVG files** — one per glyph occurrence, with computed viewBox
+- **Specimen sheets** — visual grid of all occurrences per glyph, grouped by tablet
+- **Tablet photographs** from Wikimedia Commons
+- **Glyph meanings** — confirmed (lunar calendar, turtle) and proposed (bird-man, deity, fish)
+- **Bilingual** — English and Russian via subdomain (`ru.rongorongo.top`)
+- **SEO optimized** — meta tags, Open Graph, sitemap, hreflang
 
-## Laravel Sponsors
+## Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Laravel 12 · PHP 8.4 · Filament v5 · Tailwind CSS v4 · PostgreSQL · Redis · Varnish · OpenResty · Docker
 
-### Premium Partners
+## Quick start
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+git clone https://github.com/lxgf/rongorongo.git
+cd rongorongo
+chmod +x prod.sh
+./prod.sh
+```
 
-## Contributing
+The deploy script creates `.env.docker`, builds Docker containers, runs migrations, restores the corpus dump, seeds data, and runs health checks.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Development
 
-## Code of Conduct
+```bash
+# Docker dev environment (with bind mounts for live reload)
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Import corpus from kohaumotu.org (scrapes SVG glyphs)
+docker compose exec app php artisan rongorongo:import-corpus
 
-## Security Vulnerabilities
+# Download tablet photos from Wikimedia Commons
+docker compose exec app php artisan rongorongo:download-photos
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Rebuild frontend
+npx vite build
+```
+
+See [AGENTS.md](AGENTS.md) for full documentation.
+
+## Data sources
+
+- SVG glyph tracings from [kohaumotu.org](http://kohaumotu.org) by P. Spaelti
+- Glyph catalog: Barthel, Thomas (1958). *Grundlagen zur Entzifferung der Osterinselschrift*
+- Extended catalog: Fischer, Steven Roger (1997). *Rongorongo: The Easter Island Script*
+- Tablet photographs from Wikimedia Commons (CC BY-SA 3.0)
+- Corpus structure informed by [rongopy](https://github.com/jgregoriods/rongopy)
+
+Materials used under fair use for non-commercial academic research.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
