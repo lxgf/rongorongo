@@ -18,11 +18,3 @@ Route::get('/lines/{tablet?}', [PageController::class, 'lines'])->name('lines')-
 Route::get('/line/{tablet}/{side}/{line}', [PageController::class, 'line'])->name('line');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
-
-Route::get('/locale/{locale}', function (string $locale) {
-    if (array_key_exists($locale, config('app.supported_locales', []))) {
-        session()->put('locale', $locale);
-    }
-
-    return redirect()->back();
-})->name('locale.switch');
