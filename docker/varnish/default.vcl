@@ -34,6 +34,12 @@ sub vcl_recv {
         set req.http.X-Forwarded-Proto = "http";
     }
 
+    # Public pages are stateless (no session) — drop cookies so they are
+    # cached for everyone; admin panel and Livewire keep theirs
+    if (req.url !~ "^/(admin|livewire)") {
+        unset req.http.Cookie;
+    }
+
     # Pass non-GET/HEAD requests
     if (req.method != "GET" && req.method != "HEAD") {
         return (pass);

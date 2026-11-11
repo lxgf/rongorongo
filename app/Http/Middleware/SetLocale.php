@@ -17,7 +17,10 @@ class SetLocale
             app()->setLocale('ru');
         } else {
             // Fallback to session for local dev, default to EN
-            $locale = session('locale', config('app.locale'));
+            // Public routes run without a session (see routes/web.php)
+            $locale = $request->hasSession()
+                ? $request->session()->get('locale', config('app.locale'))
+                : config('app.locale');
             if (array_key_exists($locale, config('app.supported_locales', []))) {
                 app()->setLocale($locale);
             }
