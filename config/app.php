@@ -95,6 +95,21 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Emails
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of user emails allowed into the Filament admin
+    | panel outside the local environment (ADMIN_EMAILS env variable).
+    |
+    */
+
+    'admin_emails' => array_values(array_filter(array_map(
+        fn (string $email) => strtolower(trim($email)),
+        explode(',', (string) env('ADMIN_EMAILS', ''))
+    ))),
+
     'supported_locales' => [
         'en' => ['name' => 'English', 'native' => 'English'],
         'ru' => ['name' => 'Russian', 'native' => 'Русский'],

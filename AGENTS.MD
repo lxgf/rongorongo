@@ -273,7 +273,8 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml restart varnish
 ## Filament Admin
 
 **URL:** `/admin`
-**Login:** `admin@rongorongo.local` / `password`
+**Access:** any user locally (`APP_ENV=local`); in other environments only emails listed in `ADMIN_EMAILS` (comma-separated, `.env.docker`).
+**Create admin:** `php artisan make:filament-user`
 
 7 resources in "Corpus" navigation group:
 TabletResource, GlyphResource, RenderingResource, CompoundGlyphResource, TabletLineResource, TabletRenderingResource, CompoundGlyphPartResource
