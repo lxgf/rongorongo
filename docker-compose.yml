@@ -4,7 +4,7 @@ services:
   varnish:
     image: varnish:7.6
     ports:
-      - "2020:80"
+      - "127.0.0.1:2020:80"  # только localhost: наружу отдаёт reverse-proxy (Docker публикует порты в обход UFW)
     environment:
       VARNISH_SIZE: 256m
     volumes:

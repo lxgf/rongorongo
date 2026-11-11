@@ -3,7 +3,7 @@ services:
   # Dev: expose on port 2030 instead of 2020
   varnish:
     ports:
-      - "2030:80"
+      - "127.0.0.1:2030:80"
     environment:
       VARNISH_SIZE: 64m
 
