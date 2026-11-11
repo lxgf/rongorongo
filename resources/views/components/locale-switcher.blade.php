@@ -1,6 +1,15 @@
 @php
     $currentLocale = app()->getLocale();
     $locales = config('app.supported_locales', []);
+
+    // Locale is chosen by subdomain (see SetLocale): ru.<host> → RU, <host> → EN
+    $host = request()->getHost();
+    $baseHost = str_starts_with($host, 'ru.') ? substr($host, 3) : $host;
+    $port = request()->getPort();
+    $portSuffix = in_array($port, [80, 443], true) ? '' : ':'.$port;
+    $localeUrl = fn (string $code) => request()->getScheme().'://'
+        .($code === 'ru' ? 'ru.'.$baseHost : $baseHost)
+        .$portSuffix.request()->getRequestUri();
 @endphp
 
 <x-filament::dropdown placement="bottom-end">
@@ -14,7 +23,7 @@
         @foreach ($locales as $code => $meta)
             <x-filament::dropdown.list.item
                 tag="a"
-                :href="route('locale.switch', $code)"
+                :href="$localeUrl($code)"
                 :icon="$currentLocale === $code ? 'heroicon-m-check' : null"
                 :color="$currentLocale === $code ? 'primary' : 'gray'"
             >
