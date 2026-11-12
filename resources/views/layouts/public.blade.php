@@ -88,6 +88,11 @@
                        class="text-ink hover:text-soviet-red transition-colors font-medium">d.shaludnyov@gmail.com</a>.
                     {{ __('front.colophon.subject') }}
                 </p>
+                <p class="text-[11px] leading-relaxed text-warm-gray mt-2 max-w-xl">
+                    {{ __('front.colophon.api') }}
+                    <a href="{{ route('api.index') }}"
+                       class="text-ink hover:text-soviet-red transition-colors font-medium">{{ preg_replace('#^https?://#', '', route('api.index')) }}</a>
+                </p>
                 <p class="text-[11px] leading-relaxed text-warm-gray/70 mt-2 max-w-xl">
                     {{ __('front.colophon.attribution') }}
                 </p>
