@@ -120,7 +120,7 @@ return [
         'disclaimer' => 'This is an amateur research project. The author is not affiliated with any academic institution. The data may contain errors and inaccuracies.',
         'feedback' => 'Corrections, criticism, and suggestions are welcome at',
         'subject' => 'Please include RONGO in the subject line.',
-        'api' => 'Open data: the whole corpus — tablets, lines, glyphs, renderings, ligatures and occurrences — is available as JSON through the free public API:',
+        'api' => 'Open data: the full corpus is available as JSON via the free public API:',
         'attribution' => 'SVG glyph tracings sourced from kohaumotu.org by P. Spaelti, based on the catalogues of T. Barthel (1958) and S. R. Fischer (1997). Tablet photographs from Wikimedia Commons (CC BY-SA 3.0). Used under fair use for non-commercial research.',
     ],
     'about' => [
