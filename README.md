@@ -22,6 +22,7 @@ This platform structures the corpus of ~11,000 glyph occurrences across 24 table
 - **Specimen sheets** — visual grid of all occurrences per glyph, grouped by tablet
 - **Tablet photographs** from Wikimedia Commons
 - **Glyph meanings** — confirmed (lunar calendar, turtle) and proposed (bird-man, deity, fish)
+- **Public JSON API** — every level of the corpus at [`/api/v1`](https://rongorongo.top/api/v1), including a full dump at `/api/v1/corpus`
 - **Bilingual** — English and Russian via subdomain (`ru.rongorongo.top`)
 - **SEO optimized** — meta tags, Open Graph, sitemap, hreflang
 

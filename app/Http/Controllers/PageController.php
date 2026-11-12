@@ -188,14 +188,7 @@ class PageController extends Controller
 
     public function about()
     {
-        $stats = [
-            'tablets' => Tablet::count(),
-            'lines' => \App\Models\TabletLine::count(),
-            'glyphs' => Glyph::count(),
-            'renderings' => \App\Models\Rendering::count(),
-            'ligatures' => CompoundGlyph::count(),
-            'occurrences' => TabletRendering::count(),
-        ];
+        $stats = Tablet::corpusStats();
 
         return view('about', compact('stats'));
     }
@@ -259,8 +252,7 @@ class PageController extends Controller
 
     public function line(string $tabletCode, string $side, int $lineNumber)
     {
-        $sideMap = ['r' => 0, 'a' => 0, 'v' => 1, 'b' => 1, 'c' => 2, 'd' => 3, 'e' => 4, 'f' => 5, 'g' => 6, 'h' => 7];
-        $sideValue = $sideMap[$side] ?? (ord($side) - ord('a'));
+        $sideValue = TabletLine::sideFromParam($side);
 
         $tablet = Tablet::where('code', $tabletCode)->firstOrFail();
 

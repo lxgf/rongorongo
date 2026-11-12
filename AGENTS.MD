@@ -268,6 +268,24 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml restart varnish
 | `/locale/{locale}` | locale.switch | Toggle EN/RU |
 | `/admin` | — | Filament admin panel |
 
+### Public JSON API (`routes/api.php`)
+
+Read-only, stateless (no cookies), CORS `*`, rate limit 120 req/min per IP, errors as JSON.
+Controller: `Api/CorpusApiController`, resources: `app/Http/Resources/Api/`.
+
+| URL | Description |
+|-----|------------|
+| `/api/v1` | API description, stats, endpoint list |
+| `/api/v1/corpus` | Whole corpus in one document (tablets → lines → occurrences + glyphs, renderings, ligatures), cached 10 min |
+| `/api/v1/tablets` | Tablets with line/occurrence counts |
+| `/api/v1/tablets/{code}` | Tablet with photos and lines |
+| `/api/v1/tablets/{code}/lines/{side}/{line}` | Line with ordered occurrences (side: `a`–`h`, `r`/`v` or `0`–`7`) |
+| `/api/v1/glyphs` | All glyphs with meanings (EN/RU) and counts |
+| `/api/v1/glyphs/{code}` | Glyph with renderings, ligatures and occurrences |
+| `/api/v1/renderings`, `/api/v1/renderings/{code}` | Rendering variants (+ occurrences) |
+| `/api/v1/ligatures`, `/api/v1/ligatures/{code}` | Ligatures with their glyphs (+ occurrences) |
+| `/api/v1/occurrences` | All occurrences, paginated (`page`, `per_page` ≤ 1000), filters: `tablet`, `glyph`, `rendering`, `ligature` |
+
 ---
 
 ## Filament Admin

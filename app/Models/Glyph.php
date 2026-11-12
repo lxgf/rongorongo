@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Glyph extends Model
@@ -31,6 +32,11 @@ class Glyph extends Model
     public function renderings(): HasMany
     {
         return $this->hasMany(Rendering::class);
+    }
+
+    public function occurrences(): HasManyThrough
+    {
+        return $this->hasManyThrough(TabletRendering::class, Rendering::class);
     }
 
     public function compoundGlyphParts(): HasMany
