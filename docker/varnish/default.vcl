@@ -66,8 +66,8 @@ sub vcl_recv {
 
 # Called after the response headers have been received from the backend
 sub vcl_backend_response {
-    # Cache static assets for 1 year
-    if (bereq.url ~ "\.(gif|GIF|png|jpg|jpeg|webp|svg|ico|css|js|woff|woff2|ttf|eot)(\?.*)?$") {
+    # Cache static assets for 1 year (successful responses only — never cache a 404 for a year)
+    if (bereq.url ~ "\.(gif|GIF|png|jpg|jpeg|webp|svg|ico|css|js|woff|woff2|ttf|eot)(\?.*)?$" && beresp.status == 200) {
         set beresp.ttl = 365d;
         set beresp.grace = 1d;
         unset beresp.http.Set-Cookie;
